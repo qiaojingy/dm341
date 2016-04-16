@@ -1,4 +1,5 @@
-PATH = "docs.txt"
+import csv
+PATH = "Data/docs.txt"
 data = []
 with open(PATH, 'rb') as f:
     fields = str(f.readline().replace('\x00', ''))
@@ -36,11 +37,19 @@ def compare(item1, item2):
     else:
         return 0
 
+"""
 name_url = []
 for d in data:
     name_url.append([d[fieldsDict['url']].split('/')[-2], d[fieldsDict['url']]])
 name_url.sort(compare)
 for name in name_url:
     print name[0] + '\t' + name[1]
+"""
 
-# comment test
+outfile = "Data/FCC.csv"
+with open(outfile, 'w') as csvfile:
+    outwriter = csv.writer(csvfile,  delimiter=',')
+    for datum in data:
+        outwriter.writerow(datum[0:4])
+
+        
