@@ -83,9 +83,8 @@ public class Index {
 		}
 
 	    final File file = new File(".");
-	    System.out.println("file = " + file.getAbsoluteFile().getParent());
 		/* Read configuration file */
-		String config_path = "/configure.txt";
+		String config_path = "./configure.txt";
 		File config = new File(config_path);
 		if (!config.exists()) {
 			System.err.println("Cannot find configuration file");
@@ -110,7 +109,7 @@ public class Index {
 
 		Map<Integer, PostingList> indexList = new HashMap<Integer, PostingList>();
 		/* Read FEC data */
-		Reader in = new FileReader("path/to/file.csv");
+		Reader in = new FileReader(input_path);
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(in);
 		for (CSVRecord record : records) {
 		    String name = record.get("name");
