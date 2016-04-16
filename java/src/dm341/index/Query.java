@@ -1,4 +1,4 @@
-package cs276.assignments;
+package dm341.index;
 
 import java.io.BufferedReader;
 import java.io.File;
