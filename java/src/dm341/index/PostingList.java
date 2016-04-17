@@ -1,4 +1,4 @@
-package cs276.assignments;
+package dm341.index;
 
 import java.util.ArrayList;
 import java.util.List;

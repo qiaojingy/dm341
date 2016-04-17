@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -118,6 +119,7 @@ public class Index {
 		}
 
 		Map<Integer, PostingList> indexList = new HashMap<Integer, PostingList>();
+        Map<Integer, HashSet<Integer>> indexSet = new HashMap<Integer, HashSet<Integer>>();
 		/* Read FEC data */
 		Reader in = new FileReader(input_path);
 		BufferedReader in_buff = new BufferedReader(in);
@@ -125,24 +127,33 @@ public class Index {
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader(fields).parse(in);
 		for (CSVRecord record : records) {
 		    String name = record.get("name");
+		    if (comIdCounter < 20) System.out.println(name);
+		    String id = record.get("committee_id");
 		    name = name.toLowerCase();
-		    comDict.put(name, comIdCounter);
+		    if (name.compareTo("volgy for congress") == 0) {
+		    	System.out.println("here");
+		    }
+		    comDict.put(name + "\t" + id, comIdCounter);
 		    String[] tokens = name.trim().split("\\s+");
 		    for (String token : tokens) {
 		    	if (!termDict.containsKey(token))
 					termDict.put(token, wordIdCounter++);	
 				int wordId = termDict.get(token);
-				if (!indexList.containsKey(wordId)) {
-					PostingList postingList = new PostingList(wordId);
-					postingList.addToList(comIdCounter);
-					indexList.put(wordId,  postingList);
+				if (!indexSet.containsKey(wordId)) {
+					indexSet.put(wordId, new HashSet<Integer>());
 				}
-				else {
-					indexList.get(wordId).addToList(comIdCounter);
-				}
+				indexSet.get(wordId).add(comIdCounter);
 		    }
 		    comIdCounter++;
 		}
+		System.out.println(comIdCounter);
+		
+		for (Map.Entry<Integer, HashSet<Integer>> entry: indexSet.entrySet()) {
+            int termId = entry.getKey();
+            ArrayList<Integer> postings = new ArrayList<Integer> (entry.getValue());
+            Collections.sort(postings);
+            indexList.put(termId, new PostingList(termId, postings));
+        }
 		
 		/* Output index file */
 		String index_path = output_path + "/corpus.index";

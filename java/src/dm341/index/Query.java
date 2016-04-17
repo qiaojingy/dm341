@@ -62,7 +62,6 @@ public class Query {
 	    		j++;
 	    	}
 	    }
-	    System.out.println(answer);
 	    return answer;	  
 	}
 
@@ -113,12 +112,12 @@ public class Query {
 		}
 		termReader.close();
 
-		/* Doc dictionary */
+		/* Com dictionary */
 		BufferedReader docReader = new BufferedReader(new FileReader(new File(
 				input_path, "com.dict")));
 		while ((line = docReader.readLine()) != null) {
 			String[] tokens = line.split("\t");
-			docDict.put(Integer.parseInt(tokens[1]), tokens[0]);
+			docDict.put(Integer.parseInt(tokens[2]), tokens[0] + "\t" + tokens[1]);
 		}
 		docReader.close();
 
@@ -133,10 +132,12 @@ public class Query {
 		}
 		postReader.close();
 
+
 		/* Processing queries */
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		FileChannel fc = indexFile.getChannel();
 		/* For each query */
+		System.out.print("Input query :   ");
 		while ((line = br.readLine()) != null) {
 			/*
 			 * TODO: Your code here
@@ -147,7 +148,8 @@ public class Query {
 			 */
 			String[] queryWords = line.split(" ");
 			List<PostingList> pls = new ArrayList<PostingList> ();
-			for (String queryWord:queryWords) {
+			for (String queryWord : queryWords) {
+				queryWord = queryWord.toLowerCase();
 				if (!termDict.containsKey(queryWord)) {
 					pls.clear();
 					break;
@@ -159,7 +161,6 @@ public class Query {
 				}
 				pls.add(readPosting(fc, termDict.get(queryWord)));
 			}
-			for (int i = 0; i < 20; i++) System.out.println(docDict.get(pls.get(0).getList().get(i)));
 			Collections.sort(pls, new Comparator<PostingList>(){
 			    public int compare(PostingList p1, PostingList p2) {
 			        return p1.size() - p2.size(); // assumes you want biggest to smallest
@@ -171,20 +172,20 @@ public class Query {
 				List<Integer> current = pls.get(0).getList();
 				for (int i = 1; i < pls.size(); i++) {
 					List<Integer> toBeAdd = pls.get(i).getList();
-					System.out.println("current: " + current);
-					System.out.println("toBeAdd: " + toBeAdd);
 					current = intersect(current, toBeAdd);
-					System.out.println("result: " + current);
 				}
 				if (current.size() == 0) {
 					System.out.println("no results found");
 				} else {
+					System.out.println("Result : "); 
 					for (int docId : current) {
 						System.out.println(docDict.get(docId));
 					}
 				}
 			}
+			System.out.print("Input query :   ");
 		}
+		System.out.println();
 		br.close();
 		indexFile.close();
 	}
