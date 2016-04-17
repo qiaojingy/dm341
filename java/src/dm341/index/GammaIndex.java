@@ -1,4 +1,4 @@
-package dm341.index;
+package cs276.assignments;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class GammaIndex implements BaseIndex {
 		 */
 		long oldPos = fc.position();
 		ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
-		ByteBuffer buf = ByteBuffer.allocate(48);
+		ByteBuffer buf = ByteBuffer.allocate(128);
 		
 		long readSize = 0;
 		while (readSize < 8) {
@@ -69,7 +69,7 @@ public class GammaIndex implements BaseIndex {
 		ByteArrayOutputStream bufStream1 = new ByteArrayOutputStream();
 		ByteArrayOutputStream bufStream2 = new ByteArrayOutputStream();
 
-		bufStream1.write(BaseIndex.intToByteArray(p.getTermId()));
+		bufStream1.write(intToByteArray(p.getTermId()));
 		
 		BitSet outputGammaCode = new BitSet();
 		int numBits = 0;
@@ -85,7 +85,7 @@ public class GammaIndex implements BaseIndex {
 		byte[] gammaCodes = outputGammaCode.toByteArray();
 		
 		bufStream2.write(gammaCodes);
-		bufStream1.write(BaseIndex.intToByteArray(numBits));
+		bufStream1.write(intToByteArray(numBits));
 		
 		
 		ByteBuffer buf1 = ByteBuffer.wrap(bufStream1.toByteArray());
@@ -98,6 +98,10 @@ public class GammaIndex implements BaseIndex {
 		while(buf2.hasRemaining()) {
 		    fc.write(buf2);
 		}
+	}
+
+	public static byte[] intToByteArray(int n) {
+		return ByteBuffer.allocate(4).putInt(n).array();
 	}
 
 	/**

@@ -43,7 +43,7 @@ public class Index {
 	// Index
 	private static BaseIndex index = null;
 
-	private static boolean writePos = false;
+	private static boolean writePos = true;
 	
 	/* 
 	 * Write a posting list to the given file 
@@ -82,7 +82,6 @@ public class Index {
 			throw new RuntimeException(e);
 		}
 
-	    final File file = new File(".");
 		/* Read configuration file */
 		String config_path = "./configure.txt";
 		File config = new File(config_path);
@@ -103,14 +102,27 @@ public class Index {
 			return;
 		}
 
-		/* Output File */
-		String output_path = data_path + "/FEC/data.index";
+		/* Output directory */
+		String output_path = data_path + "/FEC/output";
 		File output = new File(output_path);
+		if (output.exists() && !output.isDirectory()) {
+			System.err.println("Invalid output directory: " + output_path);
+			return;
+		}
+
+		if (!output.exists()) {
+			if (!output.mkdirs()) {
+				System.err.println("Create output directory failure");
+				return;
+			}
+		}
 
 		Map<Integer, PostingList> indexList = new HashMap<Integer, PostingList>();
 		/* Read FEC data */
 		Reader in = new FileReader(input_path);
-		Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(in);
+		BufferedReader in_buff = new BufferedReader(in);
+		String[] fields= in_buff.readLine().split(",");
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader(fields).parse(in);
 		for (CSVRecord record : records) {
 		    String name = record.get("name");
 		    name = name.toLowerCase();
@@ -131,14 +143,19 @@ public class Index {
 		    }
 		    comIdCounter++;
 		}
+		
+		/* Output index file */
+		String index_path = output_path + "/corpus.index";
+		File index = new File(index_path);
+
 
 		/* Sort and output */
-		if (!output.createNewFile()) {
+		if (!index.createNewFile()) {
 			System.err.println("Create new block failure.");
 			return;
 		}
 		
-		RandomAccessFile bfc = new RandomAccessFile(output, "rw");
+		RandomAccessFile bfc = new RandomAccessFile(index, "rw");
 		FileChannel fc = bfc.getChannel();
 		List<PostingList> list = new ArrayList<PostingList>(indexList.values());
 		for (PostingList entry : list) {
@@ -154,6 +171,13 @@ public class Index {
 		termWriter.close();
 
 
+		BufferedWriter docWriter = new BufferedWriter(new FileWriter(new File(
+				output, "com.dict")));
+		for (String doc : comDict.keySet()) {
+			docWriter.write(doc + "\t" + comDict.get(doc) + "\n");
+		}
+		docWriter.close();
+		
 		BufferedWriter postWriter = new BufferedWriter(new FileWriter(new File(
 				output, "posting.dict")));
 		for (Integer termId : postingDict.keySet()) {
@@ -161,5 +185,7 @@ public class Index {
 					+ "\t" + postingDict.get(termId).getSecond() + "\n");
 		}
 		postWriter.close();
+
+		
 	}
 }

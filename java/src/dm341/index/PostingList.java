@@ -1,4 +1,4 @@
-package dm341.index;
+package cs276.assignments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +48,6 @@ public class PostingList {
 		List<Integer> newPostings = new ArrayList<Integer>();
 		List<Integer> otherPostings = other.getList();
 		int i = 0, j = 0;
-		if (termId == 20) {
-			System.out.println("***********");
-			System.out.println("list 1: " + postings);
-			System.out.println("list 2: " + otherPostings);
-		}
 		while (i < postings.size() && j < otherPostings.size()) {
 			int nextDoc = 0;
 			if (postings.get(i) == otherPostings.get(j)) {
@@ -73,10 +68,6 @@ public class PostingList {
 		}
 		while (j < otherPostings.size()) {
 			newPostings.add(otherPostings.get(j++));
-		}
-		if (termId == 20) {
-			System.out.println("***********");
-			System.out.println("merged list: " + newPostings);
 		}
 		postings = newPostings;
 		return this;

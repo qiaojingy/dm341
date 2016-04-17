@@ -50,7 +50,6 @@ public class Query {
 
 	    // WRITE ALGORITHM HERE
 	    while (i < l1.size() && j < l2.size()) {
-	    	System.out.println("In intersect, l1[i], l2[j]: " + l1.get(i) + "\t" + l2.get(j));
 	    	if (l1.get(i).compareTo(l2.get(j)) == 0) {
 	    		answer.add(l1.get(i));
 	    		i++;
@@ -67,15 +66,22 @@ public class Query {
 	    return answer;	  
 	}
 
-	public static void main(String[] args) throws IOException {
-		/* Parse command line */
-		if (args.length != 2) {
-			System.err.println("Usage: java Query [Basic|VB|Gamma] index_dir");
+	public static void main(String[] args) throws IOException {		
+		/* Read configuration file */
+		String config_path = "./configure.txt";
+		File config = new File(config_path);
+		if (!config.exists()) {
+			System.err.println("Cannot find configuration file");
 			return;
 		}
+		BufferedReader reader = new BufferedReader(new FileReader(config));
+		String data_path = reader.readLine();
+		reader.close();
 
+		/* Compression method */
+		String compression = "Gamma";
 		/* Get index */
-		String className = "cs276.assignments." + args[0] + "Index";
+		String className = "dm341.index." + compression + "Index";
 		try {
 			Class<?> indexClass = Class.forName(className);
 			index = (BaseIndex) indexClass.newInstance();
@@ -86,21 +92,21 @@ public class Query {
 		}
 
 		/* Get index directory */
-		String input = args[1];
-		File inputdir = new File(input);
+		String input_path = data_path + "/FEC/output";
+		File inputdir = new File(input_path);
 		if (!inputdir.exists() || !inputdir.isDirectory()) {
-			System.err.println("Invalid index directory: " + input);
+			System.err.println("Invalid index directory: " + input_path);
 			return;
 		}
 
 		/* Index file */
-		RandomAccessFile indexFile = new RandomAccessFile(new File(input,
+		RandomAccessFile indexFile = new RandomAccessFile(new File(input_path,
 				"corpus.index"), "r");
 
 		String line = null;
 		/* Term dictionary */
 		BufferedReader termReader = new BufferedReader(new FileReader(new File(
-				input, "term.dict")));
+				input_path, "term.dict")));
 		while ((line = termReader.readLine()) != null) {
 			String[] tokens = line.split("\t");
 			termDict.put(tokens[0], Integer.parseInt(tokens[1]));
@@ -109,7 +115,7 @@ public class Query {
 
 		/* Doc dictionary */
 		BufferedReader docReader = new BufferedReader(new FileReader(new File(
-				input, "doc.dict")));
+				input_path, "com.dict")));
 		while ((line = docReader.readLine()) != null) {
 			String[] tokens = line.split("\t");
 			docDict.put(Integer.parseInt(tokens[1]), tokens[0]);
@@ -118,7 +124,7 @@ public class Query {
 
 		/* Posting dictionary */
 		BufferedReader postReader = new BufferedReader(new FileReader(new File(
-				input, "posting.dict")));
+				input_path, "posting.dict")));
 		while ((line = postReader.readLine()) != null) {
 			String[] tokens = line.split("\t");
 			posDict.put(Integer.parseInt(tokens[0]), Long.parseLong(tokens[1]));

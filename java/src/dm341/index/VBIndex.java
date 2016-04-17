@@ -1,4 +1,4 @@
-package dm341.index;
+package cs276.assignments;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class VBIndex implements BaseIndex {
 		 */
 		long oldPos = fc.position();
 		ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
-		ByteBuffer buf = ByteBuffer.allocate(16);
+		ByteBuffer buf = ByteBuffer.allocate(128);
 		
 		int readSize = 0;
 		while (readSize < 8) {
@@ -62,7 +62,7 @@ public class VBIndex implements BaseIndex {
 		ByteArrayOutputStream bufStream1 = new ByteArrayOutputStream();
 		ByteArrayOutputStream bufStream2 = new ByteArrayOutputStream();
 		
-		bufStream1.write(BaseIndex.intToByteArray(p.getTermId()));
+		bufStream1.write(intToByteArray(p.getTermId()));
 		
 		byte[] outputVBCode = new byte[20];
 		int size = 0;
@@ -75,7 +75,7 @@ public class VBIndex implements BaseIndex {
 			bufStream2.write(outputVBCode, 0, curSize);
 		}
 
-		bufStream1.write(BaseIndex.intToByteArray(size));
+		bufStream1.write(intToByteArray(size));
 		
 		
 		ByteBuffer buf1 = ByteBuffer.wrap(bufStream1.toByteArray());
@@ -87,6 +87,10 @@ public class VBIndex implements BaseIndex {
 		while(buf2.hasRemaining()) {
 		    fc.write(buf2);
 		}
+	}
+
+	public static byte[] intToByteArray(int n) {
+		return ByteBuffer.allocate(4).putInt(n).array();
 	}
 
 	/**

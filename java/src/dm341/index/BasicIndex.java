@@ -1,8 +1,7 @@
-package dm341.index;
+package cs276.assignments;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class BasicIndex implements BaseIndex {
 		 */
 		long oldPos = fc.position();
 		ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
-		ByteBuffer buf = ByteBuffer.allocate(16);
+		ByteBuffer buf = ByteBuffer.allocate(128);
 		
 		int readSize = 0;
 		while (readSize < 8) {
@@ -50,12 +49,6 @@ public class BasicIndex implements BaseIndex {
 		for (int i = 0; i < numPostings; i++) {
 			postings.add(postingBuf.getInt());
 		}
-		if (termId == 20) {
-			System.out.println("posting: " + postings);
-		}
-		if (termId < 100) {
-			System.out.println("In readposting termId: " + termId);
-		}
 		return new PostingList(termId, postings);
 	}
 
@@ -75,11 +68,11 @@ public class BasicIndex implements BaseIndex {
 		
 		ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
 		
-		bufStream.write(BaseIndex.intToByteArray(p.getTermId()));
-		bufStream.write(BaseIndex.intToByteArray(4*p.getList().size()));
+		bufStream.write(intToByteArray(p.getTermId()));
+		bufStream.write(intToByteArray(4*p.getList().size()));
 		
 		for (int i = 0; i < p.getList().size(); i++) {
-			bufStream.write(BaseIndex.intToByteArray(p.getList().get(i)));
+			bufStream.write(intToByteArray(p.getList().get(i)));
 		}
 		
 		ByteBuffer buf = ByteBuffer.wrap(bufStream.toByteArray());
@@ -88,39 +81,8 @@ public class BasicIndex implements BaseIndex {
 		    fc.write(buf);
 		}
 	}
-	
 
-	
-	public static void main(String[] args) {
-		
-		//BitSet GammaCode = new BitSet();
-		
-		try {
-			RandomAccessFile testFile = new RandomAccessFile("testFile.txt", "rw");
-			FileChannel fc = testFile.getChannel();
-			ArrayList<Integer> posting = new ArrayList<Integer>();
-			for (int i = 1; i < 6553; i+= 1) {
-				posting.add(i);
-			}
-			/*
-			posting.add(1);
-			posting.add(5);
-			posting.add(7);
-			posting.add(8);*/
-			
-			PostingList pl = new PostingList(4, posting);
-			System.out.println("encoded:" + pl);
-			BaseIndex bi = new BasicIndex();
-			bi.writePosting(fc, pl);
-			fc.position(0);
-			
-			PostingList rpl = bi.readPosting(fc);
-			System.out.println("decoded:" + rpl);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public static byte[] intToByteArray(int n) {
+		return ByteBuffer.allocate(4).putInt(n).array();
 	}
-
 }
