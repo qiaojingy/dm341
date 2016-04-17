@@ -14,11 +14,19 @@
   <property name="build.home"    value="${basedir}/classes"/>
   <property name="docs.home"     value="${basedir}/docs"/>
   <property name="src.home"      value="${basedir}/src"/>
+  <property name="external.lib.dir" value="${basedir}/lib"/>
   <property name="javadoc.home"  value="${basedir}/javadoc"/>
 
   <property name="compile.debug"       value="true"/>
   <property name="compile.deprecation" value="false"/>
   <property name="compile.optimize"    value="true"/>
+   <property name="compile.classpath" value="classes"/>
+  <path id="project.classpath">
+    <pathelement path="{compile.classpath}/"/>
+    <fileset dir="${external.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
 
 
 
@@ -68,6 +76,7 @@
       deprecation="${compile.deprecation}"
          optimize="${compile.optimize}"
          includeantruntime="false">
+    <classpath refid="project.classpath"/>
     </javac>
 
   </target>
