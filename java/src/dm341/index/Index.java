@@ -124,15 +124,15 @@ public class Index {
 		Reader in = new FileReader(input_path);
 		BufferedReader in_buff = new BufferedReader(in);
 		String[] fields= in_buff.readLine().split(",");
+		in_buff.close();
+		in.close();
+		in = new FileReader(input_path);
+		while (in.read() != '\n');
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader(fields).parse(in);
 		for (CSVRecord record : records) {
 		    String name = record.get("name");
-		    if (comIdCounter < 20) System.out.println(name);
 		    String id = record.get("committee_id");
 		    name = name.toLowerCase();
-		    if (name.compareTo("volgy for congress") == 0) {
-		    	System.out.println("here");
-		    }
 		    comDict.put(name + "\t" + id, comIdCounter);
 		    String[] tokens = name.trim().split("\\s+");
 		    for (String token : tokens) {
@@ -146,7 +146,6 @@ public class Index {
 		    }
 		    comIdCounter++;
 		}
-		System.out.println(comIdCounter);
 		
 		for (Map.Entry<Integer, HashSet<Integer>> entry: indexSet.entrySet()) {
             int termId = entry.getKey();
