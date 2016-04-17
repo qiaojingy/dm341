@@ -2,4 +2,4 @@
 *.swp
 configure.txt
 classes/
-/bin/
+Data/

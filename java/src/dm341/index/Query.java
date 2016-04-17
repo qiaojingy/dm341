@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +27,9 @@ public class Query {
 	private static Map<String, Integer> termDict = new TreeMap<String, Integer>();
 	// Index
 	private static BaseIndex index = null;
-
+	private static RandomAccessFile indexFile = null;
+	private static FileChannel fc = null;
+	private static boolean initialized = false;
 	
 	/* 
 	 * Write a posting list with a given termID from the file 
@@ -48,7 +51,6 @@ public class Query {
 	    int i = 0;
 	    int j = 0;
 
-	    // WRITE ALGORITHM HERE
 	    while (i < l1.size() && j < l2.size()) {
 	    	if (l1.get(i).compareTo(l2.get(j)) == 0) {
 	    		answer.add(l1.get(i));
@@ -65,7 +67,7 @@ public class Query {
 	    return answer;	  
 	}
 
-	public static void main(String[] args) throws IOException {		
+	public static void initialize() throws IOException {
 		/* Read configuration file */
 		String config_path = "./configure.txt";
 		File config = new File(config_path);
@@ -99,8 +101,9 @@ public class Query {
 		}
 
 		/* Index file */
-		RandomAccessFile indexFile = new RandomAccessFile(new File(input_path,
+		indexFile = new RandomAccessFile(new File(input_path,
 				"corpus.index"), "r");
+		fc = indexFile.getChannel();
 
 		String line = null;
 		/* Term dictionary */
@@ -131,56 +134,70 @@ public class Query {
 					Integer.parseInt(tokens[2]));
 		}
 		postReader.close();
+	}
+	
+	/* input: queryWords
+	 * output: list of results which contains all the query word
+	 * result format: name TAB id
+	 */
+	public static List<String> query(List<String> queryWords) throws IOException {
+		if (!initialized) initialize();
+		List<PostingList> pls = new ArrayList<PostingList> ();
+		for (String queryWord : queryWords) {
+			queryWord = queryWord.toLowerCase();
+			if (!termDict.containsKey(queryWord)) {
+				pls.clear();
+				break;
+			}
+			PostingList pl = readPosting(fc, termDict.get(queryWord));
+			if (pl == null) {
+				pls.clear();
+				break;
+			}
+			pls.add(readPosting(fc, termDict.get(queryWord)));
+		}
+		Collections.sort(pls, new Comparator<PostingList>(){
+		    public int compare(PostingList p1, PostingList p2) {
+		        return p1.size() - p2.size(); // assumes you want biggest to smallest
+		    }
+		});
+		if (pls.size() == 0) {
+			return null;
+		} else {
+			List<Integer> current = pls.get(0).getList();
+			for (int i = 1; i < pls.size(); i++) {
+				List<Integer> toBeAdd = pls.get(i).getList();
+				current = intersect(current, toBeAdd);
+			}
+			if (current.size() == 0) {
+				return null;
+			} else {
+				List<String> result = new ArrayList<String>();
+				for (int docId : current) {
+					result.add(docDict.get(docId));
+				}
+				return result;
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws IOException {		
 
 
 		/* Processing queries */
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		FileChannel fc = indexFile.getChannel();
 		/* For each query */
+		String line = null;
 		System.out.print("Input query :   ");
 		while ((line = br.readLine()) != null) {
-			/*
-			 * TODO: Your code here
-			 *       Perform query processing with the inverted index.
-			 *       Make sure to print to stdout the list of documents
-			 *       containing the query terms, one document file on each
-			 *       line, sorted in lexicographical order.
-			 */
 			String[] queryWords = line.split(" ");
-			List<PostingList> pls = new ArrayList<PostingList> ();
-			for (String queryWord : queryWords) {
-				queryWord = queryWord.toLowerCase();
-				if (!termDict.containsKey(queryWord)) {
-					pls.clear();
-					break;
-				}
-				PostingList pl = readPosting(fc, termDict.get(queryWord));
-				if (pl == null) {
-					pls.clear();
-					break;
-				}
-				pls.add(readPosting(fc, termDict.get(queryWord)));
+			List<String> result = query(new ArrayList<String>(Arrays.asList(queryWords)));
+			if (result == null) {
+				System.out.println("no result found");
 			}
-			Collections.sort(pls, new Comparator<PostingList>(){
-			    public int compare(PostingList p1, PostingList p2) {
-			        return p1.size() - p2.size(); // assumes you want biggest to smallest
-			    }
-			});
-			if (pls.size() == 0) {
-				System.out.println("no results found");
-			} else {
-				List<Integer> current = pls.get(0).getList();
-				for (int i = 1; i < pls.size(); i++) {
-					List<Integer> toBeAdd = pls.get(i).getList();
-					current = intersect(current, toBeAdd);
-				}
-				if (current.size() == 0) {
-					System.out.println("no results found");
-				} else {
-					System.out.println("Result : "); 
-					for (int docId : current) {
-						System.out.println(docDict.get(docId));
-					}
+			else {
+				for (String s : result) {
+					System.out.println(s);
 				}
 			}
 			System.out.print("Input query :   ");
