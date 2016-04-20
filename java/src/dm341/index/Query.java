@@ -67,6 +67,29 @@ public class Query {
 	    return answer;	  
 	}
 
+	private static List<Integer> union(List<Integer> l1, List<Integer> l2) {
+	    List<Integer> answer = new ArrayList<Integer>();
+	    int i = 0;
+	    int j = 0;
+
+	    while (i < l1.size() && j < l2.size()) {
+	    	if (l1.get(i).compareTo(l2.get(j)) == 0) {
+	    		answer.add(l1.get(i));
+	    		i++;
+	    		j++;
+	    	}
+	    	else if (l1.get(i).compareTo(l2.get(j)) < 0) {
+	    		answer.add(l1.get(i));
+	    		i++;
+	    	}
+	    	else {
+	    		answer.add(l2.get(j));
+	    		j++;
+	    	}
+	    }
+	    return answer;	  
+	}
+	
 	public static void initialize() throws IOException {
 		/* Read configuration file */
 		String config_path = "./configure.txt";
@@ -140,7 +163,7 @@ public class Query {
 	 * output: list of results which contains all the query word
 	 * result format: name TAB id
 	 */
-	public static List<String> query(List<String> queryWords) throws IOException {
+	public static List<String> query_intersect(List<String> queryWords) throws IOException {
 		if (!initialized) initialize();
 		List<PostingList> pls = new ArrayList<PostingList> ();
 		for (String queryWord : queryWords) {
@@ -181,6 +204,40 @@ public class Query {
 		}
 	}
 	
+	public static List<String> query_union(List<String> queryWords) throws IOException {
+		if (!initialized) initialize();
+		List<PostingList> pls = new ArrayList<PostingList> ();
+		for (String queryWord : queryWords) {
+			queryWord = queryWord.toLowerCase();
+			if (!termDict.containsKey(queryWord)) {
+				continue;
+			}
+			PostingList pl = readPosting(fc, termDict.get(queryWord));
+			if (pl == null) {
+				continue;
+			}
+			pls.add(readPosting(fc, termDict.get(queryWord)));
+		}
+		if (pls.size() == 0) {
+			return null;
+		} else {
+			List<Integer> current = pls.get(0).getList();
+			for (int i = 1; i < pls.size(); i++) {
+				List<Integer> toBeAdd = pls.get(i).getList();
+				current = union(current, toBeAdd);
+			}
+			if (current.size() == 0) {
+				return null;
+			} else {
+				List<String> result = new ArrayList<String>();
+				for (int docId : current) {
+					result.add(docDict.get(docId));
+				}
+				return result;
+			}
+		}
+	}
+
 	public static void main(String[] args) throws IOException {		
 
 
@@ -191,7 +248,7 @@ public class Query {
 		System.out.print("Input query :   ");
 		while ((line = br.readLine()) != null) {
 			String[] queryWords = line.split(" ");
-			List<String> result = query(new ArrayList<String>(Arrays.asList(queryWords)));
+			List<String> result = query_intersect(new ArrayList<String>(Arrays.asList(queryWords)));
 			if (result == null) {
 				System.out.println("no result found");
 			}
