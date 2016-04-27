@@ -9,23 +9,13 @@ import dm341.util.Pair;
 
 public class Classify {
 	private HashMap<String, Pair<Integer, HashSet<String>>> aliases;
-	
+	private HashMap<String, Pair<Integer, HashSet<String>>> ads;  
 	public static double THRESHOLD = 0.6;
 	public static int KGram = 3;	
 	
-	public Classify() {
+	public Classify(ArrayList<FCCRecord> records) {
 		aliases = new HashMap<String, Pair<Integer, HashSet<String>>>();
-	}
-	
-	public HashSet<String> getAliases(String organization) {
-		if (!aliases.containsKey(organization)) {
-			System.err.println("Bad Call!");
-		}
-		return aliases.get(organization).getSecond();
-	}
-	
-	public HashMap<String, HashSet<String>> mergeOrganizations(ArrayList<FCCRecord> records) {
-		HashMap<String, Pair<Integer, HashSet<String>>> ads = new HashMap<String, Pair<Integer, HashSet<String>>> ();
+		ads = new HashMap<String, Pair<Integer, HashSet<String>>> ();
 		// merge same 
 		for (FCCRecord record: records) {
 			String organization = record.getOrgName();
@@ -40,7 +30,21 @@ public class Classify {
 				myPair.getSecond().add(stationID);
 			}
 		}
+	}
+	
+	public HashSet<String> getAliases(String organization) {
+		if (!aliases.containsKey(organization)) {
+			System.err.println("Bad Call!");
+		}
+		return aliases.get(organization).getSecond();
+	}
+	
+	public HashMap<String, HashSet<String>> mergeOrganizationsLSH(ArrayList<FCCRecord> records) {
 		
+	}
+	
+	
+	public HashMap<String, HashSet<String>> mergeOrganizations() {
 		// merge similar
 		HashMap<String, HashSet<String>> uniqueOrgAds = new HashMap<String, HashSet<String>>();
 		HashSet<String> mergedOrgs = new HashSet<String> ();
