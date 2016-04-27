@@ -29,7 +29,7 @@ public class IO {
 		System.out.println("here" + data_path);
 		reader.close();
 	}
-	static List<FCCRecord> readFCCRecords() throws IOException {
+	public static List<FCCRecord> readFCCRecords() throws IOException {
 		if (!initialized)
 		    initialize();
 		/* Get index directory */
