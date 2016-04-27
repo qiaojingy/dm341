@@ -4,8 +4,9 @@ import java.util.*;
 import java.lang.*;
 /*for all algorithms, we regulate that for scores, the lower the better(two strings are more similar) */
 public class DistanceMeasure {
-
-	public static double editDistanceScore(String s1, String s2) {
+	
+	
+	public static double editSimilarity(String s1, String s2) {
 		if (s1.isEmpty() && s2.isEmpty()) return 1;
 		if (s1.isEmpty() || s2.isEmpty()) return 0;
 		
@@ -17,7 +18,7 @@ public class DistanceMeasure {
 		}
 		int editDistance = editDistance(s1, s1.length()-1, s2, s2.length()-1, minDis);
 		int maxLen = Math.max(s1.length(), s2.length());
-		return 1 - (double)editDistance/maxLen;
+		return (double)editDistance/maxLen;
 	}
 	
 	private static int editDistance(String s1, int m, String s2, int n, int[][] minDis) {
@@ -31,8 +32,8 @@ public class DistanceMeasure {
 		return minDis[m][n];
 	}
 	
-	/* JaccardDistance */
-	public static double JaccardDistanceScore(Integer kGram, String s1, String s2){
+	/* JaccardSimilarity */
+	public static double JaccardSimilarity(Integer kGram, String s1, String s2){
 		if (s1.isEmpty() || s2.isEmpty()) return 1;
 		if(s1.length()<kGram || s2.length()<kGram) return 1;
 		Set<String> set1 = new HashSet<String>();
@@ -48,8 +49,10 @@ public class DistanceMeasure {
 		Set<String> intersection = new HashSet<String>(set1);
 		intersection.retainAll(set2);
 		double jaccardSim = intersection.size()*1.0/union.size();
-		return 1-jaccardSim;
+		return jaccardSim;
 	}
+	
+	
 
 	/* Overlap coefficient
 		https://en.wikipedia.org/wiki/Overlap_coefficient*/
