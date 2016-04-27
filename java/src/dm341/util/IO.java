@@ -62,10 +62,7 @@ public class IO {
 			}
 		}
 		adRecordReader.close();
-		for (FCCRecord fr : FCCRecords) {
-			System.out.println(fr.getOrgName());
-		}
-		return null;
+		return FCCRecords;
 	}
 	public static void main(String[] args) throws IOException {
 		readFCCRecords();
