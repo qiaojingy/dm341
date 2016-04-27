@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import dm341.util.DistanceMeasure;
+import dm341.util.FCCRecord;
 import dm341.util.Pair;
 
 public class Classify {
@@ -40,6 +41,7 @@ public class Classify {
 	}
 	
 	public HashMap<String, HashSet<String>> mergeOrganizationsLSH(ArrayList<FCCRecord> records) {
+		return null;
 		
 	}
 	

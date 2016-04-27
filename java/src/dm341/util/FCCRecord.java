@@ -7,8 +7,8 @@ public class FCCRecord {
 	
 	public FCCRecord(String stationID, String url) {
 		this.stationID = stationID;
-		String orgName = url.split("/")[-2];
-		this.orgName = orgName;
+		String[] fields = url.split("/");
+		this.orgName = fields[fields.length - 2];
 		this.url = url;
 	}
 	
