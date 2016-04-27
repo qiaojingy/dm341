@@ -4,7 +4,9 @@ import java.util.*;
 import java.lang.*;
 /*for all algorithms, we regulate that for scores, the lower the better(two strings are more similar) */
 public class DistanceMeasure {
-	
+	public static double editDistanceScore(String s1, String s2) {
+		return 1 - editSimilarity(s1, s2);
+	}
 	
 	public static double editSimilarity(String s1, String s2) {
 		if (s1.isEmpty() && s2.isEmpty()) return 1;
