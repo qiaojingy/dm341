@@ -15,7 +15,7 @@ public class OrgExtractor {
 	static Set<String> stringSet2 = new HashSet<String>(
 			Arrays.asList("ads", "file", "files"));
 	static Set<String> dateStrings = new HashSet<String>(
-			Arrays.asList("Jan", "Feb", "March", "Apr", "May", "June", "July", "Aug", "Sep",
+			Arrays.asList("Jan", "Feb", "March", "Mar", "Apr", "May", "June", "July", "Aug", "Sep",
 					"Oct", "Nov", "Dec"));
 	
 	public static String extractFromUrl(String url) {
@@ -53,18 +53,26 @@ public class OrgExtractor {
 	}
 	
 	private static String removeNum(String token) {
-		
-		return null;
+		return token.replaceAll("[0-9]{3,}", "");
 	}
 
 	private static boolean isNumOrMarks(String s) {
 		String regex = "\\(?[0-9]{1,}.*";
 		if (Pattern.matches(regex, s)) return true;
+		if (dateStrings.contains(s)) return true;
 		String l = s.toLowerCase();
+		if (l.startsWith("fcc")) return true;
 		if (l.startsWith("nab")) return true;
+		if (l.startsWith("invoice")) return true;
+		if (l.startsWith("contract")) return true;
+		if (l.startsWith("request")) return true;
+		if (l.startsWith("order")) return true;
+		if (l.startsWith("issue")) return true;
 		if (l.startsWith("form")) return true;
 		if (l.startsWith("contract")) return true;
-		if (l.startsWith("pdf"));
+		if (l.startsWith("pdf")) return true;
+		if (l.startsWith("issues")) return true;
+		if (l.startsWith("wowk")) return true;
 		return false;
 	}
 	
