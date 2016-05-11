@@ -14,8 +14,8 @@ import dm341.util.Pair;
 public class Classify {
 	private HashMap<String, Pair<Integer, HashSet<String>>> aliases;
 	private HashMap<String, Pair<Integer, HashSet<String>>> ads;  
-	public static double THRESHOLD = 0.6;
-	public static int KGram = 3;	
+	public static double THRESHOLD = 0.9;
+	public static int KGram = 2;	
 	
 	public Classify(List<FCCRecord> list) {
 		aliases = new HashMap<String, Pair<Integer, HashSet<String>>>();
@@ -68,15 +68,24 @@ public class Classify {
 			for (String otherOrgName : ads.keySet()) {
 				
 				if (currOrgName.equals(otherOrgName) || currKey.equals(otherOrgName)) continue;
-				if (DistanceMeasure.JaccardSimilarity(KGram, currKey, otherOrgName) >= THRESHOLD) {
+				double score = DistanceMeasure.jaroWinklerDistanceScore(currKey, otherOrgName);
+				
+				//System.out.println("currKey "+currKey+" otherOrgName "+otherOrgName+ " score "+score);
+				if (score >= THRESHOLD) {
+					
 					int otherCount = ads.get(otherOrgName).getFirst();
 					if (ads.get(currKey).getFirst() >= otherCount) {
+						//System.out.println("current key is "+currKey);
+						//System.out.println(aliases.get(currKey).getSecond().size());
 						aliases.get(currKey).getSecond().add(otherOrgName);
 					} else {
+						//System.out.println("current key is "+currKey);
+						//System.out.println("Incoming current key is "+otherOrgName);
 						aliases.put(otherOrgName, aliases.get(currKey));
 						aliases.get(otherOrgName).setFirst(otherCount);
 						aliases.get(otherOrgName).getSecond().add(currKey);
 						aliases.remove(currKey);
+						currKey = otherOrgName;
 					}
 					mergedOrgs.add(otherOrgName);
 					stationIds.addAll(ads.get(otherOrgName).getSecond());
@@ -89,7 +98,7 @@ public class Classify {
 	}	
 	
 	public static void main(String args[]) throws IOException {
-		Classify cf = new Classify(IO.readFCCRecords());
+		Classify cf = new Classify(IO.readFCCRecordsLarge());
 		HashMap<String, HashSet<String>> results = cf.mergeOrganizations();
 		for (String result:results.keySet()) {
 			System.out.println("Organziation name:" + result + ", aliases:" + cf.getAliases(result));
