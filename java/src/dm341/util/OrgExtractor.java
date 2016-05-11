@@ -1,6 +1,7 @@
 package dm341.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -16,18 +17,22 @@ public class OrgExtractor {
 	static Set<String> dateStrings = new HashSet<String>(
 			Arrays.asList("Jan", "Feb", "March", "Apr", "May", "June", "July", "Aug", "Sep",
 					"Oct", "Nov", "Dec"));
+	
 	public static String extractFromUrl(String url) {
 		String[] phrases = url.split("/");
 		int phrasesCount = phrases.length;
 		String s = phrases[phrasesCount - 3];
-	    if (isOrg(s)) return s;
+	    if (isOrg(s)) return trimOrg(s);
 	    s = phrases[phrasesCount - 2];
-	    if (isOrg(s)) return s;
+	    if (isOrg(s)) return trimOrg(s);
 	    s = phrases[phrasesCount - 1];
+	    return trimOrg(s);
+	}
+	
+	private static String trimOrg(String s) {
 	    String[] tokens = s.split("[\\s._-]+");
 	    StringBuilder sb = new StringBuilder();
 	    boolean start = true;
-	    //sb.append(tokens[0]);
 	    for (int i = 0; i < tokens.length; i++) {
 	    	String token = tokens[i];
 	    	if (isNumOrMarks(token) || isDate(token)) {
@@ -41,15 +46,25 @@ public class OrgExtractor {
 	    		else {
 	    			sb.append(" ");
 	    		}
-	    		sb.append(token);
+	    		sb.append(removeNum(token));
 	    	}
 	    }
-	    return null;
+	    return sb.toString();
 	}
 	
+	private static String removeNum(String token) {
+		
+		return null;
+	}
+
 	private static boolean isNumOrMarks(String s) {
 		String regex = "\\(?[0-9]{1,}.*";
 		if (Pattern.matches(regex, s)) return true;
+		String l = s.toLowerCase();
+		if (l.startsWith("nab")) return true;
+		if (l.startsWith("form")) return true;
+		if (l.startsWith("contract")) return true;
+		if (l.startsWith("pdf"));
 		return false;
 	}
 	
@@ -94,16 +109,22 @@ public class OrgExtractor {
 
 	public static void main(String[] args) throws IOException {
 		List<String> urls = IO.readUrls();
+		//List<String> urls = new ArrayList<String>();
+		//urls.add("https://stations.fcc.gov//collect/files/1002/Political File/2014/Terms and Disclosures/NAB PB-18  Form 2014 (14041654252286)_.pdf");
 		String saved = "";
 		for (String url : urls) {
 			String org = extractFromUrl(url);
 			if (org != null) {
 				if (org.compareTo(saved) != 0) {
-					//System.out.println(org);
+					System.out.println(org);
+					//System.out.println("\t" + url);
 					saved = org;
 				}
 			}
-			else System.out.println(url);
+			else {
+				System.out.println("Cannot Parse");
+				//System.out.println(url);
+			}
 		}
 		/***
 		System.out.println(isNumOrMarks("(123"));

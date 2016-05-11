@@ -70,7 +70,7 @@ public class Classify {
 				if (currOrgName.equals(otherOrgName) || currKey.equals(otherOrgName)) continue;
 				double score = DistanceMeasure.jaroWinklerDistanceScore(currKey, otherOrgName);
 				
-				System.out.println("currKey "+currKey+" otherOrgName "+otherOrgName+ " score "+score);
+				//System.out.println("currKey "+currKey+" otherOrgName "+otherOrgName+ " score "+score);
 				if (score >= THRESHOLD) {
 					
 					int otherCount = ads.get(otherOrgName).getFirst();
@@ -98,7 +98,7 @@ public class Classify {
 	}	
 	
 	public static void main(String args[]) throws IOException {
-		Classify cf = new Classify(IO.readFCCRecords());
+		Classify cf = new Classify(IO.readFCCRecordsLarge());
 		HashMap<String, HashSet<String>> results = cf.mergeOrganizations();
 		for (String result:results.keySet()) {
 			System.out.println("Organziation name:" + result + ", aliases:" + cf.getAliases(result));

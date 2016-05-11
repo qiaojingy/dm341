@@ -65,6 +65,25 @@ public class IO {
 		return FCCRecords;
 	}
 	
+	public static List<FCCRecord> readFCCRecordsLarge() throws IOException {
+		if (!initialized) {
+		    initialize();
+		    initialized = true;
+		}
+		/* Get index directory */
+		String input_path = data_path + "/FCC/id_url.csv";
+		Reader reader = new InputStreamReader(new FileInputStream(input_path));
+		BufferedReader adRecordReader = new BufferedReader(reader);
+		String line;
+		List<FCCRecord> FCCRecords = new ArrayList<FCCRecord>();
+		while ((line = adRecordReader.readLine()) != null) {
+			String[] datum = line.split(",");
+			FCCRecords.add(new FCCRecord(datum[0], datum[1]));
+		}
+		adRecordReader.close();
+		return FCCRecords;
+	}
+	
 	public static List<String> readUrls() throws IOException {
 		if (!initialized) {
 			initialize();
