@@ -25,12 +25,13 @@ public class IO {
 		}
 		BufferedReader reader = new BufferedReader(new FileReader(config));
 		data_path = reader.readLine();
-		System.out.println("here" + data_path);
 		reader.close();
 	}
 	public static List<FCCRecord> readFCCRecords() throws IOException {
-		if (!initialized)
+		if (!initialized) {
 		    initialize();
+		    initialized = true;
+		}
 		/* Get index directory */
 		String input_path = data_path + "/FCC/docs.txt";
 		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
@@ -63,7 +64,25 @@ public class IO {
 		adRecordReader.close();
 		return FCCRecords;
 	}
+	
+	public static List<String> readUrls() throws IOException {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+		String input_path = data_path + "/FCC/urls.csv";
+		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
+		BufferedReader urlReader = new BufferedReader(reader);
+		String line;
+		List<String> urls = new ArrayList<String>();
+		while ((line = urlReader.readLine()) != null) {
+			urls.add(line);
+		}
+		urlReader.close();
+		return urls;
+	}
 	public static void main(String[] args) throws IOException {
-		readFCCRecords();
+		readUrls();
+		// readFCCRecords();
 	}
 }
