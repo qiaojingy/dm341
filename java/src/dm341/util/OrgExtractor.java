@@ -27,7 +27,7 @@ public class OrgExtractor {
 	    if (isOrg(s)) return trimOrg(s);
 	    s = phrases[phrasesCount - 1];
 	    return trimOrg(s);
-	}
+	}			
 	
 	private static String trimOrg(String s) {
 	    String[] tokens = s.split("[\\s._-]+");
