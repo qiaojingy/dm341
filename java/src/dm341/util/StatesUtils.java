@@ -1,5 +1,6 @@
 package dm341.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,8 +31,35 @@ public class StatesUtils {
 		return false;
 	}
 	
-	public static boolean isContiguous(Set<String> states2) {
+	public static boolean isContiguous(String state1, String state2) {
 		return false;
+	}
+	
+	public static boolean isContiguous(String state, List<String> states) {
+		for (String s : states) {
+			if (isContiguous(state, s)) return true;
+		}
+		return false;
+	}
+	public static boolean isContiguous(List<String> states) {
+		if (states.size() <= 1) return true;
+		List<String> currentGroup = new ArrayList<String>();
+		currentGroup.add(states.get(0));
+		Set<Integer> unGroupedStates = new HashSet<Integer>();
+		for (int i = 1; i < states.size(); i++) {
+			unGroupedStates.add(i);
+		}
+		while (!unGroupedStates.isEmpty()) {
+			boolean found = false;
+			for (Integer index : unGroupedStates) {
+				if (isContiguous(states.get(index), currentGroup)) {
+					found = true;
+					currentGroup.add(states.get(index));
+				}
+			}
+			if (!found) return false;
+		}
+		return true;
 	}
 	
 	private static Map<String, String> getStateDict() {

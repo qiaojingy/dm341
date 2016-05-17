@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.util.List;
 
 public class Organization {
-	private String orgName;
+	public String orgName;
 	public List<String> nameStringList;
 	public boolean containsName;
-	public boolean isNationalCandidate;
-	public String candidateRunningState;
+	public Candidate candidate;
 	
 	public Organization(String orgName) throws Exception {
 		this.orgName = orgName;
-		this.nameStringList = NameRecognizer.getNameStringList(orgName);
-		if (this.nameStringList != null) this.containsName = true;
 	}
 	
 	public String getOrgName() {
@@ -30,6 +27,10 @@ public class Organization {
 	
 	public boolean isNationalCandidate() {
 		if (!this.containsName) return false;
-		return isNationalCandidate;
+		return this.candidate.isNationalCandidate();
+	}
+	
+	public String getCandidateState() {
+		return this.candidate.getState();
 	}
 }
