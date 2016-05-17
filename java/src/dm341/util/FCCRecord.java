@@ -16,6 +16,7 @@ public class FCCRecord {
 	String url;
 	String staName;
 	String staState;
+	String staCity;
 	String type; // invoice, contract, nab, request
 	
 	static String FCCPrefix = "http://data.fcc.gov/mediabureau/v01/tv/facility/id/";
@@ -41,6 +42,11 @@ public class FCCRecord {
 	public String getStationState(){
 		return staState;
 	}
+	
+	public String getStationCity(){
+		return staCity;
+	}
+	
 	public String getOrgName() {
 		return orgName;
 	}

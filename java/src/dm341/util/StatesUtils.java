@@ -2,13 +2,38 @@ package dm341.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class StateCounter {
+public class StatesUtils {
+	public static Set<String> hubCities;
 	public static Map<String, String> stateDict;
 	public static Set<String> stateNames;
 	public static Set<String> states;
+	
+	private static Set<String> getHubCities() {
+		if (hubCities == null) {
+			hubCities.add("New York");
+			hubCities.add("NY");
+			hubCities.add("Washington DC");
+			hubCities.add("Washington");
+			hubCities.add("DC");
+			hubCities.add("Chicago");
+			hubCities.add("Boston");
+			hubCities.add("Philadelphia");
+		}
+		return hubCities;
+	}
+	
+	public static boolean isHubCity(String cityName) {
+		return false;
+	}
+	
+	public static boolean isContiguous(Set<String> states2) {
+		return false;
+	}
+	
 	private static Map<String, String> getStateDict() {
 		if (stateDict == null) {
 			stateDict = new HashMap<String, String>();
@@ -75,7 +100,7 @@ public class StateCounter {
 		stateNames = stateDict.keySet();
 		states = new HashSet<String>(stateDict.values());
 		return stateDict;
-	}	
+	}
 	
 	public static String getState(String s) {
 		if (stateNames == null) {
