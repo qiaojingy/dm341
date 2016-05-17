@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+
 public class IO {
 	static String data_path;
 	static boolean initialized = false;
@@ -100,8 +103,30 @@ public class IO {
 		urlReader.close();
 		return urls;
 	}
+	
+	public static List<Candidate> readCandidates() throws IOException {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+		String input_path = data_path + "/FEC/candidates.csv";
+		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(reader);
+		List<Candidate> candidates = new ArrayList<Candidate>();
+		for (CSVRecord record : records) {
+		    String name = record.get("name");
+		    String office = record.get("office");
+		    String state = record.get("state");
+			candidates.add(new Candidate(name, office, state));			
+		}
+		for (Candidate candidate : candidates) {
+			System.out.println(candidate);
+		}
+		return candidates;
+	}
+
+	
 	public static void main(String[] args) throws IOException {
-		readUrls();
-		// readFCCRecords();
+		readCandidates();
 	}
 }
