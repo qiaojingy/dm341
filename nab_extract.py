@@ -72,6 +72,8 @@ def merge_org_name(line_p1,line_p2,order):
 		print str_f
 		return str_f + " "+ merge_org_name(line_p1[pos_p1:],line_p2[pos_p2:],2)
 
+
+'''
 def extract_info(txt):
 	ret_val = ["","",""]
 	count = 0
@@ -133,10 +135,90 @@ def extract_info(txt):
 		#target.write("candidate organization: "+candidate_org)
 		ret_val[2] = candidate_org
 	return ret_val
+'''
+
+
+def extract_info(txt,val):
+	ret_val = ["","",""]
+	if val == 1:
+		count = 0
+		rep_count = 1000
+		candidate_org = ""
+		org_find = False
+		cand_find = False
+		cur_line = ""
+		prev_line = ""
+		rep_find = False
+		for line in txt:
+			#print line
+			prev_line = cur_line
+			cur_line = line
+			if (line.startswith("I.") or line.startswith("I,") or line.startswith("1,") or line.startswith("1.") or line.startswith("I ") ''' or line.startswith("l,") or line.startswith("l.")''') and rep_find==False:
+				#target.write("representative: "+line[2:])
+				ret_val[0]=line[2:]
+				print "representative is: "+ret_val[0]
+				rep_count = count
+				rep_find = True
+			elif count > rep_count and re.search('[a-zA-Z]', line) and cand_find == False:
+				#print "candidate "+ line
+				candidate_org = line
+				cand_find = True
+			if "behalf" in line:
+				start1 = line.find(":")
+				if start1 == -1:
+					start1 = start1+len(line)
+				start2 = line.find(";")
+				if start2 == -1:
+					start2 = start2+len(line)
+				start = min(start1, start2)
+				true_start = start+1
+				#
+				if re.search('[a-zA-Z]', line[true_start:]):
+					#print "current line: "+line[true_start:]
+					line_final = ""
+					line_p2 = line[true_start:]
+					#deal with ", a legally" NAB form PB-17
+					res_p2 = line_p2.search("a leg",line_p2)
+					if res_p2:
+						str_p2 = res_p2.group(0)
+						line_p2 = line_p2[:line_p2.find(str_p2)]
+						res_p22 = line_p2.search(".*,",line_p2)
+						if res_p22:
+							line_p2 = res_p22.group(0)
+					# For color pdf, the name of organization may be splited into two lines
+					if re.search('[a-zA-Z]', prev_line):
+						line_p1 = prev_line
+						line_final = merge_org(line_p1,line_p2)
+					else:
+						line_final = line_p2
+					#target.write("organization: "+line_final)
+					ret_val[1] = line_final
+					org_find = True
+			count = count+1
+		if org_find == False:
+			#judge this is a name of a org
+			#target.write("candidate organization: "+candidate_org)
+			ret_val[2] = candidate_org
+	else:
+		rep_find = False
+		for line in txt:
+			#print "hello"
+			#print line
+			if rep_find == True and re.search('[a-zA-Z]', line):
+				print "org_name is: "+line
+				ret_val[1] = line
+				break
+			elif (line.startswith("I.") or line.startswith("I,") or line.startswith("1,") or line.startswith("1.") or line.startswith("I ")''' or line.startswith("l,") or line.startswith("l.")''') and rep_find==False:
+				ret_val[0]=line[2:]
+				print "representative is: "+ret_val[0]
+			elif line.startswith("do hereby request") and rep_find==False:
+				print "do hereby request"
+				rep_find = True
+	return ret_val
 
 
 
-
+'''
 def check_NAB(txt):
 	#url is for request detection
 	NAB_bank = ["AGREEMENT","FORM","POLITICAL","CANDIDATE","ADVERTISEMENTS","NON-CANDIDATE"]
@@ -150,7 +232,26 @@ def check_NAB(txt):
 	if NAB_count >=4:
 		return True
 	return False
-
+'''
+def check_NAB(txt):
+	#url is for request detection
+	NAB_bank = ["AGREEMENT","FORM","POLITICAL","CANDIDATE","ADVERTISEMENTS","NON-CANDIDATE"]
+	NAB_Non_bank = ["NON","CANDIDATE","ISSUE"]
+	NAB_Non_word = "do hereby request"
+	NAB_word ="NAB Form"
+	NAB_count = 0
+	for word in NAB_bank:
+		if txt.find(word) >=0:
+			NAB_count = NAB_count+1
+	if NAB_count >=4 or txt.find(NAB_word) >=0:
+		non_count = 0;
+		for word in NAB_Non_bank:
+			if txt.find(word)>=0:
+				non_count = non_count+1
+		if non_count == 3 or txt.find(NAB_Non_word)>=0:
+			return 2#non-candidate
+		return 1#candidate
+	return 0
 
 
 read_book = xlrd.open_workbook('/Users/xiaoshi/Dropbox/Stanford/cs341/final/test.xlsx')
@@ -190,11 +291,23 @@ for i, row in enumerate(range(read_sheet.nrows)):
 			txt = tool.image_to_string(tmp_img,lang="eng",builder=pyocr.builders.TextBuilder())
 			#print txt
 			val = check_NAB(txt)
-			print val
+			#print val
+			'''
 			if val == True:
 				#extract info from NAB
 				txt2 = txt.split("\n")
 				info = extract_info(txt2)
+				if info[0]+info[1]+info[2] !="":
+					write_sheet.write(row_count,0,record_id)
+					write_sheet.write(row_count,1,info[0])
+					write_sheet.write(row_count,2,info[1])
+					write_sheet.write(row_count,3,info[2])
+					row_count = row_count+1
+			'''
+			print txt
+			if val >0:
+				txt2 = txt.split("\n")
+				info = extract_info(txt2,val)
 				if info[0]+info[1]+info[2] !="":
 					write_sheet.write(row_count,0,record_id)
 					write_sheet.write(row_count,1,info[0])

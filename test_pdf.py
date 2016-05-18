@@ -12,7 +12,7 @@ tool = pyocr.get_available_tools()[0]
 req_image = []
 #final_text = []
 final_text = "NOT NAB"
-image_pdf = Image(filename="/Users/xiaoshi/Dropbox/Stanford/cs341/final/source/Bernie Sanders US President Democrat Contract  1310418 (14582576976535)_.pdf", resolution=450)
+image_pdf = Image(filename="/Users/xiaoshi/Dropbox/Stanford/cs341/final/source/49157Political File2014Non-Candidate Issue Adsnational education assocSCAN-14100711320 (14127116222163)_.pdf", resolution=450)
 image_png = image_pdf.convert('bmp')
 
 for img in image_png.sequence:
@@ -64,7 +64,7 @@ for img in req_image:
 	#count = count+1
 
 
-target = codecs.open("/Users/xiaoshi/Dropbox/Stanford/cs341/final/target/Bernie Sanders US President Democrat Contract  1310418 (14582576976535)_out",'w','utf-8')
+target = codecs.open("/Users/xiaoshi/Dropbox/Stanford/cs341/final/target/49157Political File2014Non-Candidate Issue Adsnational education assocSCAN-14100711320 (14127116222163)_out",'w','utf-8')
 target.write(final_text)
 target.close()
 # for item in final_text:
