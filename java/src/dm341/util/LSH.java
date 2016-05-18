@@ -58,7 +58,7 @@ public class LSH {
 				}
 			}
 		}
-		System.out.println("shinglesToInteger: " + shinglesToInteger);
+		// System.out.println("shinglesToInteger: " + shinglesToInteger);
 		
 		int shingleSize = shinglesToInteger.size();
 		// generate input matrix
@@ -71,7 +71,7 @@ public class LSH {
 			matrix.add(myVector);
 		}
 		
-		System.out.println("matrix: " + matrix);
+		// System.out.println("matrix: " + matrix);
 		
 		List<Integer> indices = new ArrayList<Integer> (shingleSize);
 		for (int i = 0; i < shingleSize; i++) {
@@ -85,12 +85,12 @@ public class LSH {
 		
 		for (int i = 0; i < NHASHES; i++) {
 			Collections.shuffle(indices);
-			System.out.println("shuffled indices: " + indices);
+			// System.out.println("shuffled indices: " + indices);
 			for (int j = 0; j < docSize; j++) {
 				signatureMatrix.get(j).add(firstOnePos(matrix.get(j), indices));
 			}
 		}
-		System.out.println("signatureMatrix: " + signatureMatrix);
+		// System.out.println("signatureMatrix: " + signatureMatrix);
 		return signatureMatrix;
 	}
 	
@@ -108,9 +108,9 @@ public class LSH {
 			docToId.put(doc, i);
 			shingledDocs.add(shingling(docs.get(i)));
 		}
-		System.out.println("idToDoc: " + idToDoc);
-		System.out.println("docToId: " + docToId);
-		System.out.println("shingledDocs: " + shingledDocs);
+		// System.out.println("idToDoc: " + idToDoc);
+		// System.out.println("docToId: " + docToId);
+		// System.out.println("shingledDocs: " + shingledDocs);
 		
 		List<List<Integer>> signatures = minHashing(shingledDocs);
 		
@@ -126,7 +126,7 @@ public class LSH {
 			for (int temp = 0; temp < NBUCKETS; temp++) {
 				buckets.add(new HashSet<Integer>());
 			}
-			System.out.println("band: " + i);
+			// System.out.println("band: " + i);
 			for (int j = 0; j < signatures.size(); j++) {
 				List<Integer> num = new ArrayList<Integer>(NROWS);
 				//Integer num = 0;
@@ -134,12 +134,12 @@ public class LSH {
 					num.add(signatures.get(j).get(k));
 					//num = num*10 + signatures.get(j).get(k);
 				}
-				System.out.println("num: " + num + "-> hashCode: " + num.hashCode());
+				//System.out.println("num: " + num + "-> hashCode: " + num.hashCode());
 				int bucketId = (num.hashCode()) % NBUCKETS;
 				buckets.get(bucketId).add(j);
 			}
 			
-			System.out.println("buckets: " + buckets);
+			// System.out.println("buckets: " + buckets);
 			
 			// put same buckets into candidates
 			for (Set<Integer> bucket: buckets) {
@@ -174,18 +174,21 @@ public class LSH {
 		String c = "bcdef";
 		String d = "wrtye";
 		String e = "poiukl";
+		String f = "piukl";
 		List<String> docs = new ArrayList<String> ();
 		docs.add(a);
 		docs.add(b);
 		docs.add(c);
 		docs.add(d);
 		docs.add(e);
-		LSH lsher = new LSH(3, 10, 5, 11);
+		docs.add(f);
+		LSH lsher = new LSH(3, 12, 6, 347);
 		lsher.lsh(docs);
 		System.out.println(a + ":" + lsher.getCandidates(a));
 		System.out.println(b + ":" + lsher.getCandidates(b));
 		System.out.println(c + ":" + lsher.getCandidates(c));
 		System.out.println(d + ":" + lsher.getCandidates(d));
 		System.out.println(e + ":" + lsher.getCandidates(e));
+		System.out.println(f + ":" + lsher.getCandidates(f));
 	}
 }
