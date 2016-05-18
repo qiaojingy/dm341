@@ -46,20 +46,20 @@ public class StatesUtils {
 		}
 		return false;
 	}
-	public static boolean isContiguous(List<String> states) throws IOException {
-		if (states.size() <= 1) return true;
+	public static boolean isContiguous(List<String> states2) throws IOException {
+		if (states2.size() <= 1) return true;
 		List<String> currentGroup = new ArrayList<String>();
-		currentGroup.add(states.get(0));
+		currentGroup.add(states2.get(0));
 		Set<Integer> unGroupedStates = new HashSet<Integer>();
-		for (int i = 1; i < states.size(); i++) {
+		for (int i = 1; i < states2.size(); i++) {
 			unGroupedStates.add(i);
 		}
 		while (!unGroupedStates.isEmpty()) {
 			boolean found = false;
 			for (Integer index : unGroupedStates) {
-				if (isContiguous(states.get(index), currentGroup)) {
+				if (isContiguous(states2.get(index), currentGroup)) {
 					found = true;
-					currentGroup.add(states.get(index));
+					currentGroup.add(states2.get(index));
 				}
 			}
 			if (!found) return false;
@@ -152,5 +152,9 @@ public class StatesUtils {
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println(isContiguous("TX", "WI"));
+		System.out.println(isContiguous("WA", "OR"));
+		System.out.println(isContiguous("VA", "KY"));
+		System.out.println(isContiguous("KS", "OK"));
+		System.out.println(isContiguous("AZ", "LA"));
 	}
 }

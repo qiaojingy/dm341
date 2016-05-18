@@ -140,7 +140,7 @@ public class IO {
 		Map<String, Set<String>> adjacentStatesDict = new HashMap<String, Set<String>>();
 		for (CSVRecord record : records) {
 		    String state1 = record.get("StateCode");
-		    String state2 = record.get("NeighbourStateCode");
+		    String state2 = record.get("NeighborStateCode");
 			if (!adjacentStatesDict.containsKey(state1)) {
 				adjacentStatesDict.put(state1, new HashSet<String>());
 			}
