@@ -125,7 +125,7 @@ public class DistanceMeasure {
 
 
 	private static double jaroDistanceScore(String s1, String s2){
-		int matchThreshold = Math.max(s1.length(),s2.length())/2-1;
+		int matchThreshold = Math.min(s1.length(),s2.length())/2-1;
 		int match = 0;
 		//boolean[] s1Matched = new boolean[s1.length()];
 		char[] s1Compare = new char[s1.length()];
