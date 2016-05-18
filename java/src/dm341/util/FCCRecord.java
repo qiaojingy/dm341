@@ -16,6 +16,8 @@ public class FCCRecord {
 	String url;
 	String staName;
 	String staState;
+	String staCity;
+	String type; // invoice, contract, nab, request
 	
 	static String FCCPrefix = "http://data.fcc.gov/mediabureau/v01/tv/facility/id/";
 	
@@ -40,6 +42,11 @@ public class FCCRecord {
 	public String getStationState(){
 		return staState;
 	}
+	
+	public String getStationCity(){
+		return staCity;
+	}
+	
 	public String getOrgName() {
 		return orgName;
 	}
@@ -49,7 +56,9 @@ public class FCCRecord {
 	}
 	
 	private Pair<String, String> getStaNameState(String stationID){
-		String recordURL = FCCPrefix+stationID+".json";
+		return new Pair<String, String>("", "");
+		/***
+		String recordURL = FCCPrefix + stationID + ".json";
 		try {
 			URL url = new URL(recordURL);
 			InputStream is = url.openStream();
@@ -68,6 +77,7 @@ public class FCCRecord {
 			e.printStackTrace();
 			return null;
 		}
+		***/
 	}
 	/*public static void main(String[] args) throws IOException {
 		FCCRecord test = new FCCRecord("49157","https://stations.fcc.gov//collect/files/49157/Political File/2014/Federal/US Senate/Kay Hagen/WCCB 10.27-11.4 2nd TV Add 1 (14140892445774)_.pdf");

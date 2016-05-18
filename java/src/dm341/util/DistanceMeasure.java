@@ -36,8 +36,8 @@ public class DistanceMeasure {
 	
 	/* JaccardSimilarity */
 	public static double JaccardSimilarity(Integer kGram, String s1, String s2){
-		if (s1.isEmpty() || s2.isEmpty()) return 1;
-		if(s1.length()<kGram || s2.length()<kGram) return 1;
+		if (s1.isEmpty() || s2.isEmpty()) return 0;
+		if(s1.length()<kGram || s2.length()<kGram) return 0;
 		Set<String> set1 = new HashSet<String>();
 		Set<String> set2 = new HashSet<String>();
 		for(int i =0;i<=s1.length()-kGram;i++){
@@ -99,7 +99,7 @@ public class DistanceMeasure {
 
 	
 
-	private static double jaroWinklerDistanceScore(String s1, String s2){
+	public static double jaroWinklerDistanceScore(String s1, String s2){
 		return jaroWinklerDistanceScore(0.7, s1,s2);
 	}
 

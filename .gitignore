@@ -2,4 +2,6 @@
 *.swp
 configure.txt
 classes/
+lib/
+classifiers/
 Data/

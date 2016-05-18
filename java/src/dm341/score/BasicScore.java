@@ -81,7 +81,7 @@ public class BasicScore {
 				tops.add(cand_score);
 			}
 			Collections.reverse(tops);
-			if (tops.get(0).getSecond() <= 0.2 || tops.get(0).getSecond() > 0.4) continue;
+			if (tops.get(0).getSecond() <= 0.9) continue;
 			System.out.println("Query term : \t" + name_url.getFirst());
 			System.out.println("Url : \t" + name_url.getSecond());
 			System.out.println("Candidates \t Id \t Scores");
