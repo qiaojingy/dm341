@@ -62,14 +62,14 @@ public class mergePipeline {
 		
 		
 		for (String orgName: allOrgs) {
-			System.out.println("\n\n\n\n\ncurrent org:" + orgName);
+			//System.out.println("\n\n\n\n\ncurrent org:" + orgName);
 			Set<String> candNames = lsher.getCandidates(orgName);
-			System.out.println("candidates are:" + candNames);
+			//System.out.println("candidates are:" + candNames);
 			for (String candName: candNames) {
-				System.out.println("\ncurrent cand:" + candName);
+				//System.out.println("\ncurrent cand:" + candName);
 				String myRoot = rootIs(orgName, roots);
 				String candRoot = rootIs(candName, roots);
-				System.out.println("my root is:" + myRoot + ", cand root is:" + candRoot);
+				//System.out.println("my root is:" + myRoot + ", cand root is:" + candRoot);
 				if (myRoot.equals(candRoot)) continue; // already merged
 				// double score = DistanceMeasure.jaroWinklerDistanceScore(myRoot, candRoot);
 				//double score = DistanceMeasure.jaroWinklerDistanceScore(orgName, candName);
@@ -81,9 +81,9 @@ public class mergePipeline {
 				}
 				
 				
-				System.out.println("Score is:" + score);
+				//System.out.println("Score is:" + score);
 				if (score >= THRESHOLD) { // need to merge
-					System.out.println("NEW PAIR FOUND!!");
+					//System.out.println("NEW PAIR FOUND!!");
 					String newRoot = myRoot;
 					String newAlias = candRoot;
 					if (orgCounts.get(myRoot) < orgCounts.get(candRoot) || (orgCounts.get(myRoot) == orgCounts.get(candRoot) && myRoot.length() < candRoot.length())) { // reverse
@@ -161,6 +161,7 @@ public class mergePipeline {
 	
 	
 	// tag whether orgname is person name
+	// fix this first
 	/*
 	public static Set<Organization> tagNames(Set<Organization> orgs) throws Exception {
 		Set<Organization> orgsWithName = new HashSet<Organization>();
