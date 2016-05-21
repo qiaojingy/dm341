@@ -7,6 +7,7 @@ import dm341.util.FCCRecord;
 import dm341.util.NameRecognizer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class DecisionTree {
 		} else {
 			for (FCCRecord fccRecord : fccRecords) {
 				if (StatesUtils.isHubCity(fccRecord.getStationCity())) {
-					if (StatesUtils.isContiguous(states)) return true;
+					if (StatesUtils.isContiguous(new ArrayList<String>(states))) return true;
 					else break;
 				}
 			}

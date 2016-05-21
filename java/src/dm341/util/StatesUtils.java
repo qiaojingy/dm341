@@ -1,5 +1,6 @@
 package dm341.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ public class StatesUtils {
 	public static Map<String, String> stateDict;
 	public static Set<String> stateNames;
 	public static Set<String> states;
+	public static Map<String, Set<String>> adjacentStatesDict;
 	
 	private static Set<String> getHubCities() {
 		if (hubCities == null) {
@@ -31,30 +33,33 @@ public class StatesUtils {
 		return false;
 	}
 	
-	public static boolean isContiguous(String state1, String state2) {
-		return false;
+	public static boolean isContiguous(String state1, String state2) throws IOException {
+		if (adjacentStatesDict == null) {
+			adjacentStatesDict = IO.readAjacentStatesDict();
+		}
+		return adjacentStatesDict.get(state1).contains(state2);
 	}
 	
-	public static boolean isContiguous(String state, List<String> states) {
+	public static boolean isContiguous(String state, List<String> states) throws IOException {
 		for (String s : states) {
 			if (isContiguous(state, s)) return true;
 		}
 		return false;
 	}
-	public static boolean isContiguous(List<String> states) {
-		if (states.size() <= 1) return true;
+	public static boolean isContiguous(List<String> states2) throws IOException {
+		if (states2.size() <= 1) return true;
 		List<String> currentGroup = new ArrayList<String>();
-		currentGroup.add(states.get(0));
+		currentGroup.add(states2.get(0));
 		Set<Integer> unGroupedStates = new HashSet<Integer>();
-		for (int i = 1; i < states.size(); i++) {
+		for (int i = 1; i < states2.size(); i++) {
 			unGroupedStates.add(i);
 		}
 		while (!unGroupedStates.isEmpty()) {
 			boolean found = false;
 			for (Integer index : unGroupedStates) {
-				if (isContiguous(states.get(index), currentGroup)) {
+				if (isContiguous(states2.get(index), currentGroup)) {
 					found = true;
-					currentGroup.add(states.get(index));
+					currentGroup.add(states2.get(index));
 				}
 			}
 			if (!found) return false;
@@ -143,5 +148,13 @@ public class StatesUtils {
 			if (stateNames.contains(sss)) return stateDict.get(sss);
 		}
 		return null;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		System.out.println(isContiguous("TX", "WI"));
+		System.out.println(isContiguous("WA", "OR"));
+		System.out.println(isContiguous("VA", "KY"));
+		System.out.println(isContiguous("KS", "OK"));
+		System.out.println(isContiguous("AZ", "LA"));
 	}
 }

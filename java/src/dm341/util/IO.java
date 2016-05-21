@@ -6,11 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -126,7 +129,37 @@ public class IO {
 	}
 
 	
-	public static void main(String[] args) throws IOException {
-		readCandidates();
+	public static Map<String, Set<String>> readAjacentStatesDict() throws IOException {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+		String input_path = data_path + "/neighbors-states.csv";
+		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(reader);
+		Map<String, Set<String>> adjacentStatesDict = new HashMap<String, Set<String>>();
+		for (CSVRecord record : records) {
+		    String state1 = record.get("StateCode");
+		    String state2 = record.get("NeighborStateCode");
+			if (!adjacentStatesDict.containsKey(state1)) {
+				adjacentStatesDict.put(state1, new HashSet<String>());
+			}
+			adjacentStatesDict.get(state1).add(state2);
+			if (!adjacentStatesDict.containsKey(state2)) {
+				adjacentStatesDict.put(state2, new HashSet<String>());
+			}
+			adjacentStatesDict.get(state2).add(state1);
+		}
+		return adjacentStatesDict;
 	}
+	
+	public static void main(String[] args) throws IOException {
+		List<FCCRecord> fccRecords = readFCCRecordsLarge();
+		for (FCCRecord fccRecord : fccRecords) {
+			String name = fccRecord.orgName;
+			if (name == null || name.length() == 0) continue;
+			System.out.println(name + "\t" + fccRecord.url);
+		}
+	}
+
 }

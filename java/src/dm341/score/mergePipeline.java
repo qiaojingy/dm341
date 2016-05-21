@@ -152,6 +152,14 @@ public class mergePipeline {
 		return ret;
 	}
 	
+	public static List<FCCRecord> toLowerCase(List<FCCRecord> fccRecords) {
+		for (FCCRecord fccRecord : fccRecords) {
+			fccRecord.orgName = fccRecord.orgName.toLowerCase();
+		}
+		return fccRecords;
+	}
+	
+	
 	// tag whether orgname is person name
 	/*
 	public static Set<Organization> tagNames(Set<Organization> orgs) throws Exception {
