@@ -11,6 +11,13 @@ import dm341.util.NameRecognizer;
 import dm341.util.Organization;
 
 public class mergePipeline {
+	public static List<FCCRecord> toLowerCase(List<FCCRecord> fccRecords) {
+		for (FCCRecord fccRecord : fccRecords) {
+			fccRecord.orgName = fccRecord.orgName.toLowerCase();
+		}
+		return fccRecords;
+	}
+	
 	public static Map<Organization, List<FCCRecord>> groupByOrg(List<FCCRecord> fccRecords) {
 		return null;
 	}

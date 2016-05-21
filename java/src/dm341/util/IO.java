@@ -154,7 +154,12 @@ public class IO {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		readCandidates();
+		List<FCCRecord> fccRecords = readFCCRecordsLarge();
+		for (FCCRecord fccRecord : fccRecords) {
+			String name = fccRecord.orgName;
+			if (name == null || name.length() == 0) continue;
+			System.out.println(name + "\t" + fccRecord.url);
+		}
 	}
 
 }
