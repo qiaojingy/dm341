@@ -1,5 +1,7 @@
 package dm341.util;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -118,7 +120,8 @@ public class LSH {
 	}
 	
 	private void hashSignatures(List<List<Integer>> signatures) {
-		int NROWS = NHASHES/NBANDS;
+		//System.out.println(signatures.size() + "," + signatures.get(0).size());
+		int NROWSINBAND = NHASHES/NBANDS;
 
 		for (int i = 0; i < NBANDS; i++) {
 			// bucket id-> set of sigs in bucket
@@ -128,14 +131,15 @@ public class LSH {
 			}
 			// System.out.println("band: " + i);
 			for (int j = 0; j < signatures.size(); j++) {
-				List<Integer> num = new ArrayList<Integer>(NROWS);
+				List<Integer> num = new ArrayList<Integer>(NROWSINBAND);
 				//Integer num = 0;
-				for (int k = i * NROWS; k < (i+1) * NROWS && k < signatures.get(j).size(); k++) {
+				for (int k = i * NROWSINBAND; k < (i+1) * NROWSINBAND && k < signatures.get(j).size(); k++) {
 					num.add(signatures.get(j).get(k));
 					//num = num*10 + signatures.get(j).get(k);
 				}
 				//System.out.println("num: " + num + "-> hashCode: " + num.hashCode());
-				int bucketId = (num.hashCode()) % NBUCKETS;
+				int bucketId = (Math.abs(num.hashCode())) % NBUCKETS;
+				//System.out.println("bucketId:" + bucketId);
 				buckets.get(bucketId).add(j);
 			}
 			
@@ -168,7 +172,7 @@ public class LSH {
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		
+		/*
 		String a = "abcdefg";
 		String b = "xyzwv";
 		String c = "bcdef";
@@ -189,6 +193,23 @@ public class LSH {
 		System.out.println(c + ":" + lsher.getCandidates(c));
 		System.out.println(d + ":" + lsher.getCandidates(d));
 		System.out.println(e + ":" + lsher.getCandidates(e));
-		System.out.println(f + ":" + lsher.getCandidates(f));
+		System.out.println(f + ":" + lsher.getCandidates(f));*/
+		String line = null;
+		BufferedReader br = new BufferedReader(new FileReader("/Users/weiwang/Documents/CS/CS341/dm341/java/names.txt"));
+		
+		Set<String> dedup = new HashSet<String>();
+		while ((line = br.readLine()) != null) {
+			dedup.add(line.toLowerCase());
+			//System.out.println(line);
+		}
+		ArrayList<String> orgs = new ArrayList<String> (dedup);
+		Collections.sort(orgs);
+		System.out.println(orgs.size());
+		
+		LSH lsher = new LSH(3, 120, 40, 3613);
+		lsher.lsh(orgs);
+		for (String org: orgs) {
+			System.out.println(org + ":" + lsher.getCandidates(org));
+		}
 	}
 }
