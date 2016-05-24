@@ -225,6 +225,9 @@ public class mergePipeline {
 		toLowerCase(fccRecords);
 		Map<Organization, List<FCCRecord>> orgToFCCs = groupByOrg(fccRecords);
 		Set<Organization> orgsWithName = tagNames(orgToFCCs.keySet());
+		for (Organization org : orgsWithName) {
+			System.out.println(org.nameStringList);
+		}
 		tagCandidates(orgsWithName, IO.readCandidates());
 		for (Organization org : orgToFCCs.keySet()) {
 			DecisionTree.tagGoodness(org, orgToFCCs.get(org));

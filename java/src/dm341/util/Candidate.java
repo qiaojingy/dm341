@@ -10,7 +10,6 @@ public class Candidate {
 	
 	public Candidate(String name, String office, String state) {
 		this.name = name;
-		System.out.println(office);
 		switch (office) {
 		case "H":
 			this.office = Office.House;
