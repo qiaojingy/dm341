@@ -177,6 +177,10 @@ public class DistanceMeasure {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		double aaa = jaroDistanceScore("americans for prosperity","americans for fair skies");
+		double bbb = jaroDistanceScore("americans for prosperity","afp americans for prosperity");
+		System.out.println(aaa);
+		System.out.println(bbb);
 	}
 
 }
