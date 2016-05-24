@@ -14,10 +14,12 @@ import java.util.Set;
 import dm341.util.Candidate;
 import dm341.util.DistanceMeasure;
 import dm341.util.FCCRecord;
+import dm341.util.IO;
 import dm341.util.LSH;
 import dm341.util.NameRecognizer;
 import dm341.util.Organization;
 import dm341.util.Pair;
+import dm341.util.Station;
 
 public class mergePipeline {
 	
@@ -161,19 +163,17 @@ public class mergePipeline {
 	
 	
 	// tag whether orgname is person name
-	// fix this first
-	/*
 	public static Set<Organization> tagNames(Set<Organization> orgs) throws Exception {
 		Set<Organization> orgsWithName = new HashSet<Organization>();
 		for (Organization org : orgs) {
 			org.nameStringList = NameRecognizer.getNameStringList(org.orgName);
-			if (org.nameStringList != null) {
+			if (org.nameStringList != null && org.nameStringList.size() > 0) {
 				org.containsName = true;
 				orgsWithName.add(org);
 			}
 		}
 		return orgsWithName;
-	}*/
+	}
 	
 	
 	private static Map<String, Set<Candidate>> buildIndex(List<Candidate> candidates) {
@@ -192,6 +192,13 @@ public class mergePipeline {
 		return index;
 	}
 	
+	public static void tagStations(List<FCCRecord> fccRecords) throws IOException {
+		Map<String, Station> stationsDict = IO.readStations();
+		for (FCCRecord fccRecord : fccRecords) {
+			fccRecord.station = stationsDict.get(fccRecord.getStationID());
+		}
+	}
+	
 	// tag the candidates
 	// COX, JOHN R.
 	// GOSAR, PAUL ANTHONY
@@ -202,7 +209,8 @@ public class mergePipeline {
 		for (Organization org: orgs) {
 			if (org.containsName()) {
 				List<String> nameList = org.getNameStringList();
-				Set<Candidate> intersect = new HashSet<Candidate>(index.get(nameList.get(0)));
+				String temp = nameList.get(0);
+				Set<Candidate> intersect = new HashSet<Candidate>(index.get(temp));
 				for (int i = 1; i < nameList.size(); i++) {
 					intersect.retainAll(index.get(nameList.get(i)));
 				}
@@ -211,7 +219,21 @@ public class mergePipeline {
 		}
 	}
 	
+	public static void mergeRecords() throws Exception {
+		List<FCCRecord> fccRecords = IO.readFCCRecordsLarge();
+		tagStations(fccRecords);
+		toLowerCase(fccRecords);
+		Map<Organization, List<FCCRecord>> orgToFCCs = groupByOrg(fccRecords);
+		Set<Organization> orgsWithName = tagNames(orgToFCCs.keySet());
+		tagCandidates(orgsWithName, IO.readCandidates());
+		for (Organization org : orgToFCCs.keySet()) {
+			DecisionTree.tagGoodness(org, orgToFCCs.get(org));
+		}
+	}
+	
+	
 	public static void main(String[] args) throws Exception {
+		/***
 		String line = null;
 		BufferedReader br = new BufferedReader(new FileReader("/Users/weiwang/Documents/CS/CS341/dm341/java/names.txt"));
 		Map<String, Integer> orgCounts = new HashMap<String, Integer>();
@@ -240,5 +262,9 @@ public class mergePipeline {
 			System.out.println(org + ":" + ret.get(org));
 		}
 		System.out.println(list.size());
+		***/
+		mergeRecords();
 	}
+
+
 }

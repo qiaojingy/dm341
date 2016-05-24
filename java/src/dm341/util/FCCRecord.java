@@ -14,9 +14,10 @@ public class FCCRecord {
 	String stationID;
 	public String orgName;
 	String url;
-	String staName;
-	String staState;
-	String staCity;
+	public Station station;
+	// String staName;
+	// String staState;
+	// String staCity;
 	String type; // invoice, contract, nab, request
 	
 	static String FCCPrefix = "http://data.fcc.gov/mediabureau/v01/tv/facility/id/";
@@ -27,9 +28,9 @@ public class FCCRecord {
 		//this.orgName = fields[fields.length - 2];
 		this.url = url;
 		this.orgName = OrgExtractor.extractFromUrl(url);
-		Pair<String, String> staNameState = this.getStaNameState(stationID);
-		this.staName = staNameState.getFirst();
-		this.staState = staNameState.getSecond();
+		// Pair<String, String> staNameState = this.getStaNameState(stationID);
+		// this.staName = staNameState.getFirst();
+		// this.staState = staNameState.getSecond();
 	}
 	
 	public String getStationID() {
@@ -37,15 +38,15 @@ public class FCCRecord {
 	}
 	
 	public String getStationName(){
-		return staName;
+		return station.name;
 	}
 	
 	public String getStationState(){
-		return staState;
+		return station.state;
 	}
 	
 	public String getStationCity(){
-		return staCity;
+		return station.city;
 	}
 	
 	public String getOrgName() {

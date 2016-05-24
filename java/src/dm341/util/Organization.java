@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.util.List;
 
 public class Organization {
-	private String orgName;
-	private List<String> nameStringList;
-	private boolean containsName;
-	private List<Candidate> candidates;
+	public String orgName;
+	public List<String> nameStringList;
+	public boolean containsName = false;
+	public List<Candidate> candidates;
+	public String goodness;
 	
 	public Organization(String orgName) throws Exception {
 		this.orgName = orgName;
@@ -27,11 +28,15 @@ public class Organization {
 	
 	public boolean isNationalCandidate() {
 		if (!this.containsName) return false;
-		return this.candidate.isNationalCandidate();
+		for (Candidate candidate : candidates) {
+			if (candidate.isNationalCandidate())
+				return true;
+		}
+		return false;
 	}
 	
 	public String getCandidateState() {
-		return this.candidate.getState();
+		return this.candidates.get(0).getState();
 	}
 
 	public void setCandidate(List<Candidate> candidates) {

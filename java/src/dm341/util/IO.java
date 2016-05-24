@@ -107,6 +107,35 @@ public class IO {
 		return urls;
 	}
 	
+	public static Map<String, Station> readStations() throws IOException {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+		String input_path = data_path + "/FCC/stations.txt";
+		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
+		BufferedReader stationsReader = new BufferedReader(reader);
+		String line;
+		line = stationsReader.readLine();
+		stationsReader.readLine();
+		String fieldsLine = line.replace("\0", "");
+		fieldsLine = fieldsLine.substring(2);
+		String[] fields = fieldsLine.split("\\|");
+		Map<String, Integer> fieldsDict = new HashMap<String, Integer>();
+		for (int i = 0; i < fields.length; i++) {
+			fieldsDict.put(fields[i], i);
+		}
+		Map<String, Station> stationsDict = new HashMap<String, Station>();
+		while ((line = stationsReader.readLine()) != null) {
+			line = line.replace("\0", "");
+			line = line.substring(2);
+			String[] datum = line.split("\\|");
+			stationsDict.put(datum[fieldsDict.get("id")], new Station(datum[fieldsDict.get("id")], datum[fieldsDict.get("partyName")], datum[fieldsDict.get("communityState")], datum[fieldsDict.get("communityCity")]));
+		}
+		stationsReader.close();
+		return stationsDict;
+	}
+	
 	public static List<Candidate> readCandidates() throws IOException {
 		if (!initialized) {
 			initialize();
@@ -121,9 +150,6 @@ public class IO {
 		    String office = record.get("office");
 		    String state = record.get("state");
 			candidates.add(new Candidate(name, office, state));			
-		}
-		for (Candidate candidate : candidates) {
-			System.out.println(candidate);
 		}
 		return candidates;
 	}
@@ -154,12 +180,7 @@ public class IO {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		List<FCCRecord> fccRecords = readFCCRecordsLarge();
-		for (FCCRecord fccRecord : fccRecords) {
-			String name = fccRecord.orgName;
-			if (name == null || name.length() == 0) continue;
-			System.out.println(name + "\t" + fccRecord.url);
-		}
+		readStations();
 	}
 
 }
