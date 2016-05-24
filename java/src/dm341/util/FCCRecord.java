@@ -12,7 +12,7 @@ import javax.json.JsonObject;
 
 public class FCCRecord {
 	String stationID;
-	String orgName;
+	public String orgName;
 	String url;
 	String staName;
 	String staState;
@@ -23,9 +23,10 @@ public class FCCRecord {
 	
 	public FCCRecord(String stationID, String url) {
 		this.stationID = stationID;
-		String[] fields = url.split("/");
-		this.orgName = fields[fields.length - 2];
+		//String[] fields = url.split("/");
+		//this.orgName = fields[fields.length - 2];
 		this.url = url;
+		this.orgName = OrgExtractor.extractFromUrl(url);
 		Pair<String, String> staNameState = this.getStaNameState(stationID);
 		this.staName = staNameState.getFirst();
 		this.staState = staNameState.getSecond();

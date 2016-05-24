@@ -35,7 +35,7 @@ public class DistanceMeasure {
 	}
 	
 	/* JaccardSimilarity */
-	public static double JaccardSimilarity(Integer kGram, String s1, String s2){
+	public static double JaccardDistanceScore(Integer kGram, String s1, String s2){
 		if (s1.isEmpty() || s2.isEmpty()) return 0;
 		if(s1.length()<kGram || s2.length()<kGram) return 0;
 		Set<String> set1 = new HashSet<String>();
@@ -105,7 +105,7 @@ public class DistanceMeasure {
 
 	private static double jaroWinklerDistanceScore(double threshold, String s1, String s2){
 		int prefix = 0;
-		double scalingFactor = 0.1;
+		double scalingFactor = 0.01;
 		for(int i =0;i<Math.min(s1.length(),s2.length());i++){
 			if(s1.charAt(i) == s2.charAt(i)){
 				prefix +=1;
@@ -116,21 +116,23 @@ public class DistanceMeasure {
 		//length of common prefix at the start of the string up to a maximum of 4 characters
 		prefix = Math.min(4,prefix);
 		double jaroDistance = jaroDistanceScore(s1,s2);
+		/* wang wei modified
 		if (jaroDistance < threshold){
 			return jaroDistance;
 		}else {
 			return jaroDistance + prefix*scalingFactor*(1-jaroDistance);
-		}
+		}*/
+		return jaroDistance;
 	}
 
+	public static double jaroDistanceScore(String s1, String s2){
 
-	private static double jaroDistanceScore(String s1, String s2){
 		int matchThreshold = Math.min(s1.length(),s2.length())/2-1;
 		int match = 0;
 		//boolean[] s1Matched = new boolean[s1.length()];
 		char[] s1Compare = new char[s1.length()];
 		boolean[] s2Matched = new boolean[s2.length()];
-		int[] s2MatchedIndex = new int[s2.length()];
+		//int[] s2MatchedIndex = new int[s2.length()];
 		for (int i =0;i<s2.length();i++){
 			s2Matched[i] = false;
 		}
@@ -177,10 +179,83 @@ public class DistanceMeasure {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
 		double aaa = jaroDistanceScore("americans for prosperity","americans for fair skies");
 		double bbb = jaroDistanceScore("americans for prosperity","afp americans for prosperity");
 		System.out.println(aaa);
 		System.out.println(bbb);
+=======
+		String str1 = "americans for prosperity";
+		String str2 = "afp americans for prosperity";
+		String str3 = "americans for prosperity 2";
+		String str4 = "americans for fair skies";
+		System.out.println(str1 + " and " + str2 + ", jaccard:" + JaccardDistanceScore(3, str1, str2));
+		System.out.println(str1 + " and " + str4 + ", jaccard:" + JaccardDistanceScore(3, str1, str4));
+		System.out.println(str1 + " and " + str3 + ", jaccard:" + JaccardDistanceScore(3, str1, str3));
+		System.out.println();
+		System.out.println(str1 + " and " + str2 + ", jaro:" + jaroDistanceScore(str1, str2));
+		System.out.println(str1 + " and " + str4 + ", jaro:" + jaroDistanceScore(str1, str4));
+		System.out.println(str1 + " and " + str3 + ", jaro:" + jaroDistanceScore(str1, str3));
+		
+		System.out.println();
+		System.out.println();
+		String str5 = "league of conservation voters";
+		String str6 = "leag of conservative voters";
+		String str7 = "league of conservative voters";
+
+		System.out.println(str5 + " and " + str6 + ", jaccard:" + JaccardDistanceScore(3, str5, str6));
+		System.out.println(str5 + " and " + str7 + ", jaccard:" + JaccardDistanceScore(3, str5, str7));
+		System.out.println(str6 + " and " + str7 + ", jaccard:" + JaccardDistanceScore(3, str6, str7));
+		System.out.println();
+		System.out.println(str5 + " and " + str6 + ", jaro:" + jaroDistanceScore(str5, str6));
+		System.out.println(str5 + " and " + str7 + ", jaro:" + jaroDistanceScore(str5, str7));
+		System.out.println(str6 + " and " + str7 + ", jaro:" + jaroDistanceScore(str6, str7));
+		
+		System.out.println();
+		System.out.println();
+		String str8 = "nrcc 2014";
+		String str9 = "dccc 2014";
+
+		System.out.println(str8 + " and " + str9 + ", jaccard:" + JaccardDistanceScore(3, str8, str9));
+
+		System.out.println();
+		System.out.println(str8 + " and " + str9 + ", jaro:" + jaroDistanceScore(str8, str9));
+		
+		System.out.println();
+		System.out.println();
+		String str10 = "patriot majority";
+		String str11 = "patriot majority usa";
+
+		System.out.println(str10 + " and " + str11 + ", jaccard:" + JaccardDistanceScore(3, str10, str11));
+
+		System.out.println();
+		System.out.println(str10 + " and " + str11 + ", jaro:" + jaroDistanceScore(str10, str11));
+		
+		System.out.println();
+		System.out.println();
+		String str12 = "sen majority pac";
+		String str13 = "house majority pac";
+		String str14 = "senate majority pac";
+		System.out.println(str12 + " and " + str13 + ", jaccard:" + JaccardDistanceScore(3, str12, str13));
+		System.out.println(str12 + " and " + str14 + ", jaccard:" + JaccardDistanceScore(3, str12, str14));
+		System.out.println(str13 + " and " + str14 + ", jaccard:" + JaccardDistanceScore(3, str13, str14));
+		System.out.println();
+		System.out.println(str12 + " and " + str13 + ", jaro:" + jaroDistanceScore(str12, str13));
+		System.out.println(str12 + " and " + str14 + ", jaro:" + jaroDistanceScore(str12, str14));
+		System.out.println(str13 + " and " + str14 + ", jaro:" + jaroDistanceScore(str13, str14));
+		System.out.println();
+		System.out.println();
+		
+		String str15 = "yes on 91";
+		String str16 = "yes on 480";
+		
+
+		System.out.println(str15 + " and " + str16 + ", jaccard:" + JaccardDistanceScore(3, str15, str16));
+
+		System.out.println();
+		System.out.println(str15 + " and " + str16 + ", jaro:" + jaroDistanceScore(str15, str16));
+		
+>>>>>>> a9fef6c6aa6221196385f6f23fa64392e3403ea0
 	}
 
 }
