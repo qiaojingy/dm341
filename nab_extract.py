@@ -221,7 +221,7 @@ for i, row in enumerate(range(read_sheet.nrows)):
 			tmp_img = tmp_img.point(lambda x: x>190 and 255)
 			tmp_img = tmp_img.filter(ImageFilter.GaussianBlur(radius = 1.5))
 			txt = tool.image_to_string(tmp_img,lang="eng",builder=pyocr.builders.TextBuilder())
-			print txt
+			#print txt
 			val = check_NAB(txt)
 			#print val
 			
