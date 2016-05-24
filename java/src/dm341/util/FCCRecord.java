@@ -81,6 +81,27 @@ public class FCCRecord {
 		}
 		***/
 	}
+	
+	private String getStaCity(String stationID){
+		String recordURL = FCCPrefix + stationID + ".json";
+		try {
+			URL url = new URL(recordURL);
+			InputStream is = url.openStream();
+			JsonReader rdr = Json.createReader(is);
+			JsonObject obj = rdr.readObject();
+			JsonObject res = obj.getJsonObject("results").getJsonObject("facility");
+			String staCity = res.getString("communityCity");
+			return staCity;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 	/*public static void main(String[] args) throws IOException {
 		FCCRecord test = new FCCRecord("49157","https://stations.fcc.gov//collect/files/49157/Political File/2014/Federal/US Senate/Kay Hagen/WCCB 10.27-11.4 2nd TV Add 1 (14140892445774)_.pdf");
 		System.out.println("name of station is: "+test.getStationName());
