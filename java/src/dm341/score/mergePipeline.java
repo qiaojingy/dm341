@@ -5,10 +5,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import dm341.util.Candidate;
@@ -210,11 +212,36 @@ public class mergePipeline {
 			if (org.containsName()) {
 				List<String> nameList = org.getNameStringList();
 				String temp = nameList.get(0);
-				Set<Candidate> intersect = new HashSet<Candidate>(index.get(temp));
-				for (int i = 1; i < nameList.size(); i++) {
-					intersect.retainAll(index.get(nameList.get(i)));
+				//Set<Candidate> intersect = index.get(temp) != null? new HashSet<Candidate>(index.get(temp)) : new HashSet<Candidate> ();
+				
+				Map<Candidate, Integer> counts = new HashMap<Candidate, Integer>();
+				for (int i = 0; i < nameList.size(); i++) {
+					if (index.get(nameList.get(i)) != null) {
+						for (Candidate cand: index.get(nameList.get(i))) {
+							if (counts.containsKey(cand)) {
+								counts.put(cand, counts.get(cand) + 1);
+							} else {
+								counts.put(cand, 1);
+							}
+						}
+					}
 				}
-				org.setCandidate(candidates);
+				if (counts.size() == 0) continue;
+				List<Map.Entry<Candidate, Integer>> sortList = new ArrayList<Map.Entry<Candidate, Integer>> (counts.entrySet());
+				Collections.sort(sortList, new Comparator<Map.Entry<Candidate, Integer>> () {
+					@Override
+					public int compare(Entry<Candidate, Integer> o1, Entry<Candidate, Integer> o2) {
+						// TODO Auto-generated method stub
+						return -1 * o1.getValue().compareTo(o2.getValue());
+					}});
+				
+				List<Candidate> myCandidates = new ArrayList<Candidate>();
+				int maxCount = sortList.get(0).getValue();
+				for (Map.Entry<Candidate, Integer> entry: sortList) {
+					if (entry.getValue() != maxCount) break;
+					myCandidates.add(entry.getKey());
+				}
+				org.setCandidate(myCandidates);
 			}
 		}
 	}
