@@ -251,7 +251,35 @@ public class mergePipeline {
 	}
 	
 	public static void tagFECs(Set<Organization> orgs) throws Exception {
-
+		List<Committee> committees = IO.readCommittees();
+		Set<String> allCommits = new HashSet<String> ();
+		Map<String, Committee> nameToCommittee = new HashMap<String, Committee>();
+		for (Committee committee: committees) {
+			allCommits.add(committee.getName());
+			nameToCommittee.put(committee.getName(), committee);
+		} 
+		
+		for (Organization org: orgs) {
+			String orgName = org.getOrgName();
+			String bestCand = null;
+			double bestScore = THRESHOLD;
+			for (Committee committee: committees) {
+				String cand = committee.getName();
+				double score = 0;
+				if (similarityMeasure.equals("Jaccard")) {
+					score = DistanceMeasure.JaccardDistanceScore(3, orgName, cand);
+				} else {
+					score = DistanceMeasure.jaroDistanceScore(orgName, cand);
+				}
+				if (score > bestScore) {
+					bestScore = score;
+					bestCand = cand;
+				}
+			}
+			if (bestCand != null) {
+				org.setCommittee(nameToCommittee.get(bestCand));
+			}
+		}
 		/*
 		System.out.println("in tagFEC");
 		List<Committee> committees = IO.readCommittees();
