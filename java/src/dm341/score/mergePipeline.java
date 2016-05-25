@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import dm341.util.Candidate;
+import dm341.util.Commitee;
 import dm341.util.DistanceMeasure;
 import dm341.util.FCCRecord;
 import dm341.util.IO;
@@ -250,7 +251,8 @@ public class mergePipeline {
 		}
 	}
 	
-	public static void tagFECs(Set<Organization> orgs) {
+	public static void tagFECs(Set<Organization> orgs) throws IOException {
+		List<Commitee> commitees = IO.readCommitees();
 		return;
 	}
 	
