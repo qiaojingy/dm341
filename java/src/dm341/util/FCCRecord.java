@@ -11,7 +11,7 @@ import javax.json.JsonReader;
 import javax.json.JsonObject;
 
 public class FCCRecord {
-	String stationID;
+	public String stationID;
 	public String orgName;
 	String url;
 	public Station station;
@@ -23,7 +23,7 @@ public class FCCRecord {
 	static String FCCPrefix = "http://data.fcc.gov/mediabureau/v01/tv/facility/id/";
 	
 	public FCCRecord(String stationID, String url) {
-		this.stationID = stationID;
+		this.stationID = stationID.trim();
 		//String[] fields = url.split("/");
 		//this.orgName = fields[fields.length - 2];
 		this.url = url;
@@ -33,6 +33,9 @@ public class FCCRecord {
 		// this.staState = staNameState.getSecond();
 	}
 	
+	public String toString() {
+		return stationID + "\t" + url;
+	}
 	public String getStationID() {
 		return stationID;
 	}

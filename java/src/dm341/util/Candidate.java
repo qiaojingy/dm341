@@ -1,7 +1,7 @@
 package dm341.util;
 
 public class Candidate {
-	private String name;
+	public String name;
 	private enum Office {
 	    House, President, Senate
 	}
@@ -24,7 +24,6 @@ public class Candidate {
 	public String getName() {
 		return name;
 	}
-	
 	
 	public Office getOffice() {
 		return office;

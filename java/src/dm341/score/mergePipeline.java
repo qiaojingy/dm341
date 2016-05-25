@@ -198,6 +198,10 @@ public class mergePipeline {
 		Map<String, Station> stationsDict = IO.readStations();
 		for (FCCRecord fccRecord : fccRecords) {
 			fccRecord.station = stationsDict.get(fccRecord.getStationID());
+			if (fccRecord.station == null) {
+				fccRecord.stationID = fccRecord.getStationID().substring(1);
+				fccRecord.station = stationsDict.get(fccRecord.getStationID());
+			}
 		}
 	}
 	
@@ -246,18 +250,46 @@ public class mergePipeline {
 		}
 	}
 	
+	public static void tagFECs(Set<Organization> orgs) {
+		return;
+	}
+	
 	public static void mergeRecords() throws Exception {
 		List<FCCRecord> fccRecords = IO.readFCCRecordsLarge();
 		tagStations(fccRecords);
 		toLowerCase(fccRecords);
 		Map<Organization, List<FCCRecord>> orgToFCCs = groupByOrg(fccRecords);
+		tagFECs(orgToFCCs.keySet());
 		Set<Organization> orgsWithName = tagNames(orgToFCCs.keySet());
-		for (Organization org : orgsWithName) {
-			System.out.println(org.nameStringList);
-		}
 		tagCandidates(orgsWithName, IO.readCandidates());
+		/***
+		for (Organization org : orgsWithName) {
+			System.out.println("name string list: " + org);
+			System.out.println("matches: ");
+			if (org.getCandidate() != null) {
+				for (Candidate candidate : org.getCandidate()) {
+					System.out.print(candidate.name + " ** ");
+				}
+			}
+			System.out.println();
+			System.out.println("----------------------------");
+		}
+		***/
 		for (Organization org : orgToFCCs.keySet()) {
 			DecisionTree.tagGoodness(org, orgToFCCs.get(org));
+		}
+		for (Organization org : orgToFCCs.keySet()) {
+			if (org.goodness != null && org.goodness.compareTo("rid") == 0) {
+				System.out.println(org);
+				System.out.println(org.candidates);
+				System.out.println(org.candidates.get(0).getState());
+				for (FCCRecord fccRecord : orgToFCCs.get(org)) {
+					System.out.println(fccRecord.getStationState());
+				}
+				for (FCCRecord fccRecord : orgToFCCs.get(org)) {
+					System.out.println(fccRecord.stationID + "\t" + fccRecord.url());
+				}
+			}
 		}
 	}
 	

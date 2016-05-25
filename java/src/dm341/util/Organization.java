@@ -14,6 +14,9 @@ public class Organization {
 		this.orgName = orgName;
 	}
 	
+	public String toString() {
+		return orgName;
+	}
 	public String getOrgName() {
 		return this.orgName;
 	}

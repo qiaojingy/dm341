@@ -95,7 +95,7 @@ public class IO {
 			initialize();
 			initialized = true;
 		}
-		String input_path = data_path + "/FCC/urls.csv";
+		String input_path = data_path + "/FCC/urls copy.csv";
 		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
 		BufferedReader urlReader = new BufferedReader(reader);
 		String line;
@@ -146,7 +146,7 @@ public class IO {
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(reader);
 		List<Candidate> candidates = new ArrayList<Candidate>();
 		for (CSVRecord record : records) {
-		    String name = record.get("name");
+		    String name = record.get("name").toLowerCase();
 		    String office = record.get("office");
 		    String state = record.get("state");
 			candidates.add(new Candidate(name, office, state));			
@@ -154,6 +154,21 @@ public class IO {
 		return candidates;
 	}
 
+	public static List<Commitee> readCommitees() throws IOException {
+		if (!initialized) {
+			initialize();
+			initialized = true;
+		}
+		String input_path = data_path + "/FEC/data.csv";
+		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(reader);
+		List<Commitee> commitees = new ArrayList<Commitee>();
+		for (CSVRecord record : records) {
+		    String name = record.get("name").toLowerCase();
+			commitees.add(new Commitee(name));	
+		}
+		return commitees;
+	}
 	
 	public static Map<String, Set<String>> readAjacentStatesDict() throws IOException {
 		if (!initialized) {
@@ -180,7 +195,10 @@ public class IO {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		readStations();
+		List<Commitee> commitees = readCommitees();
+		for (Commitee commitee : commitees) {
+			System.out.println(commitee.name);
+		}
 	}
 
 }

@@ -26,7 +26,7 @@ public class DecisionTree {
 				org.goodness = null;
 				return false;
 			} else {
-				if (org.candidates != null && org.candidates.size() == 1 && !org.candidates.get(0).getState().equals(states.toArray()[0])) {
+				if (org.candidates != null && org.candidates.size() == 1 && org.candidates.get(0).getState().compareTo((String) states.toArray()[0]) != 0 && org.candidates.get(0).getState().compareTo("US") != 0) {
 					org.goodness = "rid";
 					return false;
 				} else {
@@ -40,6 +40,7 @@ public class DecisionTree {
 					else break;
 				}
 			}
+			if (org.candidates == null) return true;
 			for (Candidate candidate : org.candidates) { 
 				if (candidate.isNationalCandidate()) {
 					org.goodness = null;
