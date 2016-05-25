@@ -4,11 +4,20 @@ import java.io.IOException;
 import java.util.List;
 
 public class Organization {
-	public String orgName;
-	public List<String> nameStringList;
-	public boolean containsName = false;
-	public List<Candidate> candidates;
-	public String goodness;
+	private String orgName;
+	private List<String> nameStringList;
+	private boolean containsName = false;
+	private List<Candidate> candidates;
+	private String goodness;
+	private Committe committe;
+	
+	public Committe getCommitte() {
+		return this.committe;
+	}
+	
+	public void setCommitte(Committe committe) {
+		this.committe = committe;
+	}
 	
 	public Organization(String orgName) throws Exception {
 		this.orgName = orgName;

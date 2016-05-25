@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import dm341.util.Candidate;
-import dm341.util.Commitee;
+import dm341.util.Committe;
 import dm341.util.DistanceMeasure;
 import dm341.util.FCCRecord;
 import dm341.util.IO;
@@ -25,6 +25,12 @@ import dm341.util.Pair;
 import dm341.util.Station;
 
 public class mergePipeline {
+	private static int KGRAM = 3;
+	private static int NHASHES = 120; 
+	private static int NBANDS = 40;
+	private static int NBUCKETS = 3613;
+	private static String similarityMeasure = "Jaccard"; // "Jaro", "Jaccard"
+	private static double THRESHOLD = similarityMeasure.equals("Jaccard")? 0.6: 0.85;
 	
 	private static String rootIs(String node, Map<String, String> roots) {
 		String curNode = node;
@@ -37,19 +43,6 @@ public class mergePipeline {
 	} 
 	
 	private static Map<String, Set<String>> findSimilarDups(Map<String, Integer> orgCounts) throws Exception {
-		int KGRAM = 3;
-		int NHASHES = 120; 
-		int NBANDS = 40;
-		int NBUCKETS = 3613;
-		String similarityMeasure = "Jaccard"; // "Jaro", "Jaccard"
-		
-		double THRESHOLD = 0;
-		
-		if (similarityMeasure.equals("Jaccard")) {
-			THRESHOLD = 0.6;
-		} else if (similarityMeasure.equals("Jaro")) {
-			THRESHOLD = 0.85;
-		} else throw new Exception("Invalid measure");
 		
 		ArrayList<String> allOrgs = new ArrayList<String>(orgCounts.size()); //orgCounts.keySet());
 		Map<String, String> roots = new HashMap<String, String> ();
@@ -252,8 +245,43 @@ public class mergePipeline {
 	}
 	
 	public static void tagFECs(Set<Organization> orgs) throws IOException {
-		List<Commitee> commitees = IO.readCommitees();
-		return;
+		List<Committe> committes = IO.readCommitees();
+		Set<String> allCommits = new HashSet<String> ();
+		List<String> allNames = new ArrayList<String> ();
+		Map<String, Committe> nameToCommitte = new HashMap<String, Committe>();
+		for (Committe committe: committes) {
+			allCommits.add(committe.getName());
+			allNames.add(committe.getName());
+			nameToCommitte.put(committe.getName(), committe);
+		}
+		for (Organization org: orgs) {
+			allNames.add(org.getOrgName());
+		}
+		LSH lsher = new LSH(KGRAM, NHASHES, NBANDS, NBUCKETS);
+		lsher.lsh(allNames);
+		double THRESHOLD = 0.6;
+		for (Organization org: orgs) {
+			String orgName = org.getOrgName();
+			Set<String> candidates = lsher.getCandidates(orgName);
+			String bestCand = null;
+			double highestScore = THRESHOLD;
+			for (String cand: candidates) {
+				if (!allCommits.contains(cand)) continue;
+				double score = 0;
+				if (similarityMeasure.equals("Jaccard")) {
+					score = DistanceMeasure.JaccardDistanceScore(3, orgName, cand);
+				} else {
+					score = DistanceMeasure.jaroDistanceScore(orgName, cand);
+				}
+				if (score > highestScore) {
+					highestScore = score;
+					bestCand = cand;
+				}
+			}
+			if (bestCand != null) {
+				org.setCommitte(nameToCommitte.get(bestCand));
+			}
+		}
 	}
 	
 	public static void mergeRecords() throws Exception {
