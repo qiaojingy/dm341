@@ -279,6 +279,7 @@ public class mergePipeline {
 			if (bestCand != null) {
 				org.setCommittee(nameToCommittee.get(bestCand));
 			}
+			System.out.print(org + "->" + bestCand);
 		}
 		/*
 		System.out.println("in tagFEC");
