@@ -250,7 +250,7 @@ public class mergePipeline {
 		}
 	}
 	
-	public static void tagFECs(Set<Organization> orgs) throws Exception {
+	public static void tagFECs(Set<Organization> orgs, Map<Organization, List<FCCRecord>> orgToFCCs) throws Exception {
 		List<Committee> committees = IO.readCommittees();
 		Set<String> allCommits = new HashSet<String> ();
 		Map<String, Committee> nameToCommittee = new HashMap<String, Committee>();
@@ -279,7 +279,9 @@ public class mergePipeline {
 			if (bestCand != null) {
 				org.setCommittee(nameToCommittee.get(bestCand));
 			}
+			
 			System.out.println(org + "->" + bestCand);
+			System.out.println(orgToFCCs.get(org));
 		}
 		/*
 		System.out.println("in tagFEC");
@@ -370,7 +372,7 @@ public class mergePipeline {
 		Set<Organization> orgs = orgToFCCs.keySet();
 		// fccRecords = null;
 		// orgToFCCs = null;
-		tagFECs(orgs);
+		tagFECs(orgs, orgToFCCs);
 		
 		try {
 			FileOutputStream fileOut = new FileOutputStream("tmp/orgToFCCs.ser");
