@@ -370,8 +370,19 @@ public class mergePipeline {
 		Set<Organization> orgs = orgToFCCs.keySet();
 		// fccRecords = null;
 		// orgToFCCs = null;
-		// tagFECs(orgs);
-		//tagFECs(orgToFCCs.keySet());
+		tagFECs(orgs);
+		
+		try {
+			FileOutputStream fileOut = new FileOutputStream("tmp/orgToFCCs.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(orgToFCCs);
+			out.close();
+			fileOut.close();
+			System.out.printf("Serialized data is saved in tmp/employee.ser");
+		} catch(IOException i) {
+			i.printStackTrace();
+		}
+		
 		Set<Organization> orgsWithName = tagNames(orgToFCCs.keySet());
 		tagCandidates(orgsWithName, IO.readCandidates());
 		/***
