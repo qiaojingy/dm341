@@ -332,7 +332,7 @@ public class mergePipeline {
 	}
 	
 	public static void mergeRecords() throws Exception {
-		boolean readser = false;
+		boolean readser = true;
 		Map<Organization, List<FCCRecord>> orgToFCCs = null;
 		List<FCCRecord> fccRecords = null;
 		if (readser) {
