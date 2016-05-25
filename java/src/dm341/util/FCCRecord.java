@@ -3,6 +3,7 @@ import dm341.util.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -10,7 +11,7 @@ import javax.json.Json;
 import javax.json.JsonReader;
 import javax.json.JsonObject;
 
-public class FCCRecord {
+public class FCCRecord implements Serializable{
 	public String stationID;
 	public String orgName;
 	String url;

@@ -154,7 +154,7 @@ public class IO {
 		return candidates;
 	}
 
-	public static List<Commitee> readCommitees() throws IOException {
+	public static List<Committee> readCommittees() throws IOException {
 		if (!initialized) {
 			initialize();
 			initialized = true;
@@ -162,10 +162,10 @@ public class IO {
 		String input_path = data_path + "/FEC/data.csv";
 		Reader reader = new InputStreamReader(new FileInputStream(input_path), "UTF-8");
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(reader);
-		List<Commitee> commitees = new ArrayList<Commitee>();
+		List<Committee> commitees = new ArrayList<Committee>();
 		for (CSVRecord record : records) {
 		    String name = record.get("name").toLowerCase();
-			commitees.add(new Commitee(name));	
+			commitees.add(new Committee(name));	
 		}
 		return commitees;
 	}
@@ -195,9 +195,9 @@ public class IO {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		List<Commitee> commitees = readCommitees();
-		for (Commitee commitee : commitees) {
-			System.out.println(commitee.name);
+		List<Committee> committees = readCommittees();
+		for (Committee committee : committees) {
+			System.out.println(committee.name);
 		}
 	}
 

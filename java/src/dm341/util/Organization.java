@@ -1,22 +1,23 @@
 package dm341.util;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
-public class Organization {
-	private String orgName;
-	private List<String> nameStringList;
-	private boolean containsName = false;
-	private List<Candidate> candidates;
-	private String goodness;
-	private Committe committe;
+public class Organization implements Serializable{
+	public String orgName;
+	public List<String> nameStringList;
+	public boolean containsName = false;
+	public List<Candidate> candidates;
+	public String goodness;
+	public Committee committee = null;
 	
-	public Committe getCommitte() {
-		return this.committe;
+	public Committee getCommitte() {
+		return this.committee;
 	}
 	
-	public void setCommitte(Committe committe) {
-		this.committe = committe;
+	public void setCommittee(Committee committe) {
+		this.committee = committe;
 	}
 	
 	public Organization(String orgName) throws Exception {

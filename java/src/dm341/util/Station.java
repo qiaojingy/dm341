@@ -1,6 +1,8 @@
 package dm341.util;
 
-public class Station {
+import java.io.Serializable;
+
+public class Station implements Serializable {
 	public String ID;
 	public String name;
 	public String state;

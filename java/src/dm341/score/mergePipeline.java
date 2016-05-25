@@ -1,8 +1,12 @@
 package dm341.score;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import dm341.util.Candidate;
-import dm341.util.Committe;
+import dm341.util.Committee;
 import dm341.util.DistanceMeasure;
 import dm341.util.FCCRecord;
 import dm341.util.IO;
@@ -51,6 +55,7 @@ public class mergePipeline {
 			roots.put(org, org);
 		}
 		
+		System.out.println("all orgs size:" + allOrgs.size());
 		LSH lsher = new LSH(KGRAM, NHASHES, NBANDS, NBUCKETS);
 		lsher.lsh(allOrgs);
 		
@@ -113,6 +118,7 @@ public class mergePipeline {
 	
 	public static Map<Organization, List<FCCRecord>> groupByOrg(List<FCCRecord> fccRecords) throws Exception {
 
+		System.out.println(fccRecords.size());
 		Map<String, List<FCCRecord>> unitedRecords = new HashMap<String, List<FCCRecord>>();
 		Map<String, Integer> orgCounts = new HashMap<String, Integer>();
 		// unify exactly duplicated names
@@ -244,21 +250,33 @@ public class mergePipeline {
 		}
 	}
 	
-	public static void tagFECs(Set<Organization> orgs) throws IOException {
-		List<Committe> committes = IO.readCommitees();
+	public static void tagFECs(Set<Organization> orgs) throws Exception {
+
+		/*
+		System.out.println("in tagFEC");
+		List<Committee> committees = IO.readCommittees();
+		System.out.println("committe size:" + committees.size());
 		Set<String> allCommits = new HashSet<String> ();
 		List<String> allNames = new ArrayList<String> ();
-		Map<String, Committe> nameToCommitte = new HashMap<String, Committe>();
-		for (Committe committe: committes) {
-			allCommits.add(committe.getName());
-			allNames.add(committe.getName());
-			nameToCommitte.put(committe.getName(), committe);
+		Map<String, Committee> nameToCommittee = new HashMap<String, Committee>();
+		for (Committee committee: committees) {
+			allCommits.add(committee.getName());
+			allNames.add(committee.getName());
+			nameToCommittee.put(committee.getName(), committee);
 		}
+		System.out.println("build index done");
+		
 		for (Organization org: orgs) {
 			allNames.add(org.getOrgName());
 		}
+		
+		System.out.println("all names size: " + allNames.size());
+		
 		LSH lsher = new LSH(KGRAM, NHASHES, NBANDS, NBUCKETS);
 		lsher.lsh(allNames);
+		
+		System.out.println("lsh done");
+		
 		double THRESHOLD = 0.6;
 		for (Organization org: orgs) {
 			String orgName = org.getOrgName();
@@ -279,17 +297,52 @@ public class mergePipeline {
 				}
 			}
 			if (bestCand != null) {
-				org.setCommitte(nameToCommitte.get(bestCand));
+				org.setCommittee(nameToCommittee.get(bestCand));
 			}
-		}
+		}*/
 	}
 	
 	public static void mergeRecords() throws Exception {
-		List<FCCRecord> fccRecords = IO.readFCCRecordsLarge();
-		tagStations(fccRecords);
-		toLowerCase(fccRecords);
-		Map<Organization, List<FCCRecord>> orgToFCCs = groupByOrg(fccRecords);
-		tagFECs(orgToFCCs.keySet());
+		boolean readser = false;
+		Map<Organization, List<FCCRecord>> orgToFCCs = null;
+		List<FCCRecord> fccRecords = null;
+		if (readser) {
+			try
+			{
+				FileInputStream fileIn = new FileInputStream("tmp/orgToFCCs.ser");
+				ObjectInputStream in = new ObjectInputStream(fileIn);
+				orgToFCCs = (Map<Organization, List<FCCRecord>>) in.readObject();
+				in.close();
+				fileIn.close();
+			}	catch(IOException i) {
+				i.printStackTrace();
+				return;
+			}	catch(ClassNotFoundException c) {
+				System.out.println("Employee class not found");
+				c.printStackTrace();
+				return;
+			}
+		} else {
+			fccRecords = IO.readFCCRecordsLarge();
+			tagStations(fccRecords);
+			toLowerCase(fccRecords);
+			orgToFCCs = groupByOrg(fccRecords);
+			try {
+				FileOutputStream fileOut = new FileOutputStream("tmp/orgToFCCs.ser");
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(orgToFCCs);
+				out.close();
+				fileOut.close();
+				System.out.printf("Serialized data is saved in tmp/employee.ser");
+			} catch(IOException i) {
+				i.printStackTrace();
+			}
+		}
+		Set<Organization> orgs = orgToFCCs.keySet();
+		// fccRecords = null;
+		// orgToFCCs = null;
+		// tagFECs(orgs);
+		//tagFECs(orgToFCCs.keySet());
 		Set<Organization> orgsWithName = tagNames(orgToFCCs.keySet());
 		tagCandidates(orgsWithName, IO.readCandidates());
 		/***
@@ -305,6 +358,7 @@ public class mergePipeline {
 			System.out.println("----------------------------");
 		}
 		***/
+		/***
 		for (Organization org : orgToFCCs.keySet()) {
 			DecisionTree.tagGoodness(org, orgToFCCs.get(org));
 		}
@@ -320,7 +374,11 @@ public class mergePipeline {
 					System.out.println(fccRecord.stationID + "\t" + fccRecord.url());
 				}
 			}
+			if (org.committee == null) {
+				System.out.println(org);
+			}
 		}
+		***/
 	}
 	
 	

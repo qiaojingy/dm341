@@ -1,8 +1,10 @@
 package dm341.util;
 
-public class Committe {
-	private String name;
-	public Committe(String name) {
+import java.io.Serializable;
+
+public class Committee implements Serializable {
+	String name;
+	public Committee(String name) {
 		this.name = name;
 	}
 	public String getName() {
@@ -23,7 +25,7 @@ public class Committe {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Committe other = (Committe) obj;
+		Committee other = (Committee) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
